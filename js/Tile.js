@@ -60,8 +60,8 @@ Tile.GetAnimalText = function(tile) {
 	return "poor";
 }
 
-Tile.AddTribal = function(tile) {
-	tile.charIcon = $("<img src='img/person.png' width='50' height='50'>");
+Tile.AddUnit = function(tile, unit) {
+	tile.charIcon = $("<img src='" + Unit.GetIconFName(unit) + "' width='50' height='50'>");
 	tile.charIcon.attr("class", "characterTile");
 	tile.parent.append(tile.charIcon);
 }

@@ -4,6 +4,8 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="js/Tile.js"></script>
+		<script src="js/Unit.js"></script>
+
 		<script src="js/Map.js"></script>
 
 		<script src="js/Util.js"></script>
@@ -11,8 +13,9 @@
 		<script type="text/javascript">
 			window.onload = function() {
 				// note, Map needs to inited before Util! It currently has all the game startup stuff in it
-				Map.Init();
 				Util.Init();
+
+				Map.GenerateMap();
 			}
 		</script>
 	</head>

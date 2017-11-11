@@ -2,7 +2,7 @@ var Map = {};
 Map.MAX_WIDTH = 15;
 Map.MAX_HEIGHT = 15;
 
-Map.Init = function() {
+Map.GenerateMap = function() {
 	Map.tileInfos = [];
 	for (var i=0 ; i<Map.MAX_WIDTH ; i++) {
 		var rowObj = $("<tr></tr>");
@@ -17,7 +17,11 @@ Map.Init = function() {
 			if (i == 8 && j == 8) {
 				Map.curX = i;
 				Map.curY = j;
-				Tile.AddTribal(tileInfo);
+
+				var newUnit = Unit.CreateUnit("tribal");
+				Unit.selectedUnit = newUnit;
+				Unit.LoadInfo(newUnit);
+				Tile.AddUnit(tileInfo, newUnit);
 			}
 			rowInfos.push(tileInfo);
 		}
@@ -69,10 +73,11 @@ Map.NavigateTo = function(x, y) {
 	Map.curX = x;
 	Map.curY = y;
 	Map.UpdateTileInfo(Map.tileInfos[x][y]);
-	Tile.AddTribal(Map.tileInfos[x][y]);
+	Tile.AddUnit(Map.tileInfos[x][y], Unit.selectedUnit);
 
-	Util.HandleBlink();
 	Util.StartBlink();
+
+	Unit.ProcessTurn();
 }
 
 

@@ -21,6 +21,7 @@ Util.HandleBlink = function() {
 
 Util.StopBlink = function() {
 	clearInterval(Util.blinkInterval);
+	Util.BlinkInterval = null;
 
 	// make sure we're not showing the grayed out square but the actual tile images
 	if (Util.blinking) {
@@ -29,6 +30,10 @@ Util.StopBlink = function() {
 }
 
 Util.StartBlink = function() {
+	Util.HandleBlink();
+	if (Util.blinkInterval != null) {
+		Util.StopBlink();
+	}
 	Util.blinkInterval = window.setInterval(Util.HandleBlink, 1000);
 }
 
