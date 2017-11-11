@@ -19,7 +19,7 @@ Map.GenerateMap = function() {
 				Map.curY = j;
 
 				var newUnit = Unit.CreateUnit("tribal");
-				Unit.selectedUnit = newUnit;
+				Unit.SelectUnit(newUnit);
 				Unit.LoadInfo(newUnit);
 				Tile.AddUnit(tileInfo, newUnit);
 			}

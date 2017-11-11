@@ -12,9 +12,18 @@ Unit.CreateUnit = function(type) {
 	newUnit.wood = 0;
 	newUnit.type = type;
 
+	if (type == "tribal") {
+		newUnit.actions = [Action.GatherAction, Action.HuntAction, Action.CookAction, Action.EncampAction];
+	}
+
 	Unit.units.push(newUnit);
 
 	return newUnit;
+}
+
+Unit.SelectUnit = function(unit) {
+	Unit.selectedUnit = unit;
+	ActionPanel.LoadUnit(unit);
 }
 
 Unit.GetIconFName = function(unit) {
