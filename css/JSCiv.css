@@ -1,0 +1,17 @@
+.mapCell {
+	position: relative;
+}
+
+.mapTile {
+	position: relative;
+	z-index: 1;
+	top: 0;
+	left: 0;
+}
+
+.characterTile {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	left: 0;
+}

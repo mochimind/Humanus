@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/JSCiv.css">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="js/Tile.js"></script>
+		<script src="js/Map.js"></script>
+
+		<script src="js/Util.js"></script>
+
+		<script type="text/javascript">
+			window.onload = function() {
+				// note, Map needs to inited before Util! It currently has all the game startup stuff in it
+				Map.Init();
+				Util.Init();
+			}
+		</script>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td>
+					<table id='map'>
+					</table>
+				</td>
+				<td style="vertical-align:top">
+					Explored: <span id='explored'></span><br>
+					Plant life: <span id='plants'></span><br>
+					Animal life: <span id='animals'></span><br>
+					<br>
+					Unit: <span id='unit'></span><br>
+					Population: <span id='population'></span><br>
+					Food: <span id='food'></span><br>
+					Wood: <span id='wood'></span><br>
+				</td>
+			</tr>
+		</table>
+		<span id='debug'></span>
+	</body>
+</html>
