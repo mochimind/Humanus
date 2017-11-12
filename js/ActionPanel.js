@@ -19,8 +19,8 @@ ActionPanel.LoadUnit = function(unit) {
 ActionPanel.LoadDetails = function(unit, action) {
 	$("#actionDetails").empty();
 	var executeBut = $("<button>Do it</button>");
+	var tile = Unit.GetTile(unit);
 	if (action == Action.GatherAction) {
-		var tile = Unit.GetTile(unit);
 
 		// prepopulate the number of gatherers
 		var gatherers = Unit.GetAllocatedPop(unit, Action.GatherAction);
@@ -36,52 +36,93 @@ ActionPanel.LoadDetails = function(unit, action) {
 
 		// here we calculate the effective max based on available population, and what the tile can support
 		// note, we need to add the current gatherers to the allocatable to get the actual allocatable
-		var effectiveMaxGatherers = Math.max(maxGatherers, Unit.GetAvailablePop(unit) + gatherers);
-		$("#actionDetails").append("<span> / " + maxGatherers + "</span>");
-		$("#actionDetails").append("<br>");		
+		var effectiveMaxGatherers = Math.min(maxGatherers, Unit.GetAvailablePop(unit) + gatherers);
+		$("#actionDetails").append("<span> / " + effectiveMaxGatherers + "</span>");
 		(function(_unit) {
 			executeBut.click(function() {
 				ActionPanel.HandleGather(_unit);
 			})
 		})(unit);
 	} else if (action == Action.HuntAction) {
-
+		var hunters = Unit.GetAllocatedPop(unit, Action.HuntAction);
+		$("#actionDetails").append("<div>Hunting allows you to catch game that gives a lot of food and hides." + 
+			"However, your hunters are not guaranteed to land a catch! Each hunter has a 10% chance to net a catch will net you on average 3 food & hides</div>");
+		$("#actionDetails").append("<br>");
+		$("#actionDetails").append("<div>" + "Given the animals here, you can expect to catch on average " + Tile.GetMaxHuntingFood(tile) + " food from this location </div>");
+		$("#actionDetails").append("<div>" + "You have " + hunters + " people hunting</div>");
+		$("#actionDetails").append("<div>" + "You have " + Unit.GetAvailablePop(unit) + " people free</div>");
+		$("#actionDetails").append("<div>" + "How many would you like to hunt here?</div>");
+		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10'>0</textarea>");
+		(function(_unit) {
+			executeBut.click(function() {
+				ActionPanel.HandleHunt(_unit);
+			})
+		})(unit);
 	} else if (action == Action.CookAction) {
 
 	} else if (action == Action.EncampAction) {
 
 	}
+	$("#actionDetails").append("<br>");		
 	$("#actionDetails").append(executeBut);
 
 }
 
 ActionPanel.HandleGather = function(unit) {
 	var workers = $("#gatherInput").val();
-	// make sure they didn't input anything funky
-	console.log(workers);
-	if (isNaN(workers)) {
-		alert("please input a valid number");
+	if (!ActionPanel.ValidateWorkers(workers, unit, Tile.GetMaxGatherers(Unit.GetTile(unit)))) {
 		return;
 	}
 
-	// make sure we get rid of decimals
-	workers = Math.floor(workers);
+	ActionPanel.CommitWorkers(workers, unit, Action.GatherAction);
+}
+
+ActionPanel.HandleHunt = function(unit) {
+	var workers = $("#huntInput").val();
+	if (!ActionPanel.ValidateWorkers(workers, unit)) {
+		return;
+	}
+	ActionPanel.CommitWorkers(workers, unit, Action.HuntAction);
+
+}
+
+// make sure they didn't input anything funky
+ActionPanel.ValidateWorkers = function(workers, unit, maxWorkers) {
+	console.log("validating: " + workers + "," + unit + "," + maxWorkers);
+	if (isNaN(workers)) {
+		alert("please input a valid number");
+		return false;
+	}
+
+	if (workers < 0) {
+		alert ("please input a positive number");
+		return false;
+	}
 
 	if (workers > Unit.GetAvailablePop(unit)) {
 		alert ("not enough population to allocate!");
-		return;
+		return false;
 	}
 
-	if (workers > Tile.GetMaxGatherers(Unit.GetTile(unit))) {
-		alert("can't have that many gatherers!");
-		return;
+	if (maxWorkers != null && workers > maxWorkers) {
+		alert("can't have that many workers here!");
+		return false;
 	}
 
-	Unit.AllocatePop(unit, workers, Action.GatherAction);
-	Action.RegisterAction(unit, Action.GatherAction, workers);
+	return true;
+}
+
+// this does all the administrative work of registering an action
+ActionPanel.CommitWorkers = function(_workers, unit, action) {
+	// make sure we get rid of decimals
+	var workers = Math.floor(_workers);
+
+	Unit.AllocatePop(unit, workers, action);
+	Action.RegisterAction(unit, action, workers);
 	$("#actionDetails").empty();
 
 	ActionPanel.UpdateCurrentActions(unit);
+
 }
 
 ActionPanel.UpdateCurrentActions = function(unit) {

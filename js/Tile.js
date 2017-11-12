@@ -74,7 +74,6 @@ Tile.AddUnit = function(tile, unit) {
 }
 
 Tile.GetMaxGatherers = function(tile) {
-	console.log(tile);
 	if (tile.plants > Tile.RichFertilityThreshold) {
 		return 40;
 	} else if (tile.plants > Tile.GoodFertilityThreshold) {
@@ -84,4 +83,18 @@ Tile.GetMaxGatherers = function(tile) {
 	} else {
 		return 10;
 	}
+}
+
+// hunting food is calculated as follows
+// Every 100 fertility creates a random game on the tile. Each additional hunter increases the chance to catch
+// one of the game and decrease the fertility of the tile by 100. The probability is 10% per hunter
+// however, this means that each hunter has a 10% chance to catch something
+// game values: small is 1, medium is 3, large is 10. Chance of getting small is 50%, medium is 35%, large is 15%
+Tile.GetMaxHuntingFood = function(tile) {
+	// the expected value is a bit more than 3 given the math above
+	return Math.floor(tile.animals / 100) * 3;
+}
+
+Tile.GetMaxHunters = function(tile) {
+	
 }
