@@ -11,6 +11,10 @@ Unit.CreateUnit = function(type) {
 	newUnit.food = 100;
 	newUnit.wood = 0;
 	newUnit.type = type;
+	newUnit.x = 0;
+	newUnit.y = 0;
+	newUnit.allocatedPop = 0;
+	newUnit.employed = {};
 
 	if (type == "tribal") {
 		newUnit.actions = [Action.GatherAction, Action.HuntAction, Action.CookAction, Action.EncampAction];
@@ -24,6 +28,8 @@ Unit.CreateUnit = function(type) {
 Unit.SelectUnit = function(unit) {
 	Unit.selectedUnit = unit;
 	ActionPanel.LoadUnit(unit);
+	Unit.LoadInfo(unit);
+
 }
 
 Unit.GetIconFName = function(unit) {
@@ -38,6 +44,21 @@ Unit.LoadInfo = function(unit) {
 	$("#population").text(Math.floor(unit.population));
 	$("#food").text(Math.floor(unit.food));
 	$("#wood").text(Math.floor(unit.wood));
+}
+
+Unit.MoveUnit = function(unit, x, y) {
+	unit.x = x,
+	unit.y = y;
+
+	var tileInfo = Map.tileInfos[x][y];
+
+	// remove the existing icon
+	if (unit.charIcon != null) {
+		unit.charIcon.remove();
+	}
+
+	// add a new icon
+	Tile.AddUnit(tileInfo, unit);
 }
 
 Unit.ProcessTurn = function() {
@@ -63,4 +84,28 @@ Unit.ProcessTurn = function() {
 	}
 
 	Unit.LoadInfo(Unit.selectedUnit);
+}
+
+Unit.GetTile = function(unit) {
+	return Map.tileInfos[unit.x][unit.y];
+}
+
+Unit.GetAvailablePop = function(unit) {
+	return Math.floor(unit.population - unit.allocatedPop);
+}
+
+Unit.AllocatePop = function(unit, pop, type) {
+	if (unit.employed[type] != null) {
+		unit.allocatedPop += pop - unit.employed[type];
+	} else {
+		unit.allocatedPop += pop;
+	}
+	unit.employed[type] = pop;
+}
+
+Unit.GetAllocatedPop = function(unit, type) {
+	if (unit.employed[type] != null) {
+		return unit.employed[type];
+	}
+	return 0;
 }

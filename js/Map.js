@@ -20,8 +20,6 @@ Map.GenerateMap = function() {
 
 				var newUnit = Unit.CreateUnit("tribal");
 				Unit.SelectUnit(newUnit);
-				Unit.LoadInfo(newUnit);
-				Tile.AddUnit(tileInfo, newUnit);
 			}
 			rowInfos.push(tileInfo);
 		}
@@ -65,15 +63,11 @@ Map.NavigateTo = function(x, y) {
 
 	var ti = Map.tileInfos[Map.curX][Map.curY];
 
-	if (ti.charIcon != null) {
-		ti.charIcon.remove();
-	}
-
 	Map.curTile = Map.tileInfos[x][y].parent;
 	Map.curX = x;
 	Map.curY = y;
 	Map.UpdateTileInfo(Map.tileInfos[x][y]);
-	Tile.AddUnit(Map.tileInfos[x][y], Unit.selectedUnit);
+	Unit.MoveUnit(Unit.selectedUnit, x, y);
 
 	Util.StartBlink();
 

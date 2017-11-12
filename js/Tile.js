@@ -1,5 +1,9 @@
 var Tile = {};
 
+Tile.RichFertilityThreshold = 750;
+Tile.GoodFertilityThreshold = 500;
+Tile.DecentFertilityThreshold = 250;
+
 Tile.NewRandom = function(parent) {
 	var outObj = {};
 	outObj.parent = parent;
@@ -35,33 +39,49 @@ Tile.GetExploredText = function (tile) {
 }
 
 Tile.GetPlantLifeText = function (tile) {
-	if (tile.plants > 750) {
+	if (tile.plants > Tile.RichFertilityThreshold) {
 		return "rich";
 	}
-	if (tile.plants > 500) {
+	if (tile.plants > Tile.GoodFertilityThreshold) {
 		return "good";
 	}
-	if (tile.plants > 250) {
+	if (tile.plants > Tile.DecentFertilityThreshold) {
 		return "decent";
 	}
 	return "poor";
 }
 
 Tile.GetAnimalText = function(tile) {
-	if (tile.animals > 750) {
+	if (tile.animals > Tile.RichFertilityThreshold) {
 		return "rich";
 	}
-	if (tile.animals > 500) {
+	if (tile.animals > Tile.GoodFertilityThreshold) {
 		return "good";
 	}
-	if (tile.animals > 250) {
+	if (tile.animals > Tile.DecentFertilityThreshold) {
 		return "decent";
 	}
 	return "poor";
 }
 
+// creates a new icon and adds it to the appropriate container object
+// NOTE: the new display object is not stored in the tile, but instead in the unit itself
 Tile.AddUnit = function(tile, unit) {
-	tile.charIcon = $("<img src='" + Unit.GetIconFName(unit) + "' width='50' height='50'>");
-	tile.charIcon.attr("class", "characterTile");
-	tile.parent.append(tile.charIcon);
+	var charIcon = $("<img src='" + Unit.GetIconFName(unit) + "' width='50' height='50'>");
+	charIcon.attr("class", "characterTile");
+	tile.parent.append(charIcon);
+	unit.charIcon = charIcon;
+}
+
+Tile.GetMaxGatherers = function(tile) {
+	console.log(tile);
+	if (tile.plants > Tile.RichFertilityThreshold) {
+		return 40;
+	} else if (tile.plants > Tile.GoodFertilityThreshold) {
+		return 30;
+	} else if (tile.plants > Tile.DecentFertilityThreshold) {
+		return 20;
+	} else {
+		return 10;
+	}
 }
