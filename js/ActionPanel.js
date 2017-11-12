@@ -24,14 +24,20 @@ ActionPanel.LoadDetails = function(unit, action) {
 
 		// prepopulate the number of gatherers
 		var gatherers = Unit.GetAllocatedPop(unit, Action.GatherAction);
+		var maxGatherers = Tile.GetMaxGatherers(tile);
 
 		$("#actionDetails").append("<div>Gathering yields a small amount of food and wood (1 of each per 10 people working)</div>");
-		$("#actionDetails").append("<div>" + "Given the land fertility here, " + Tile.GetMaxGatherers(tile) + " of people can gather here</div>");
+		$("#actionDetails").append("<div>" + "Given the land fertility here, " + maxGatherers + " of people can gather here</div>");
 		$("#actionDetails").append("<div>" + "You have " + gatherers + " people gathering</div>");
 		$("#actionDetails").append("<div>" + "You have " + Unit.GetAvailablePop(unit) + " people free</div>");
 		$("#actionDetails").append("<div>" + "How many would you like to gather here?</div>");
 
 		$("#actionDetails").append("<textarea id='gatherInput' rows='1' cols='10'>" + gatherers + "</textarea>");
+
+		// here we calculate the effective max based on available population, and what the tile can support
+		// note, we need to add the current gatherers to the allocatable to get the actual allocatable
+		var effectiveMaxGatherers = Math.max(maxGatherers, Unit.GetAvailablePop(unit) + gatherers);
+		$("#actionDetails").append("<span> / " + maxGatherers + "</span>");
 		$("#actionDetails").append("<br>");		
 		(function(_unit) {
 			executeBut.click(function() {
@@ -42,7 +48,7 @@ ActionPanel.LoadDetails = function(unit, action) {
 
 	} else if (action == Action.CookAction) {
 
-	} else if (action == ACtion.EncampAction) {
+	} else if (action == Action.EncampAction) {
 
 	}
 	$("#actionDetails").append(executeBut);
@@ -74,5 +80,15 @@ ActionPanel.HandleGather = function(unit) {
 	Unit.AllocatePop(unit, workers, Action.GatherAction);
 	Action.RegisterAction(unit, Action.GatherAction, workers);
 	$("#actionDetails").empty();
+
+	ActionPanel.UpdateCurrentActions(unit);
+}
+
+ActionPanel.UpdateCurrentActions = function(unit) {
+	$("#currentActions").empty();
+	var actions = Action.GetRegisteredActions(unit);
+	for (var i=0 ; i<actions.length ; i++) {
+		$("#currentActions").append("<div>" + actions[i].action + ": " + actions[i].workers);
+	}
 }
 
