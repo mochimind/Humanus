@@ -16,8 +16,12 @@ ActionPanel.LoadUnit = function(unit) {
 	}
 }
 
+ActionPanel.ClearDetails = function() {
+	$("#actionDetails").empty();	
+}
+
 ActionPanel.LoadDetails = function(unit, action) {
-	$("#actionDetails").empty();
+	ActionPanel.ClearDetails();
 	var executeBut = $("<button>Do it</button>");
 	var tile = Unit.GetTile(unit);
 	if (action == Action.GatherAction) {
@@ -26,6 +30,8 @@ ActionPanel.LoadDetails = function(unit, action) {
 		var gatherers = Unit.GetAllocatedPop(unit, Action.GatherAction);
 		var maxGatherers = Tile.GetMaxGatherers(tile);
 
+		// TODO: need to refactor these into separate files - maybe have a hunt file that creates a list of
+		// elements which actionpanel then populates?
 		$("#actionDetails").append("<div>Gathering yields a small amount of food and wood (1 of each per 10 people working)</div>");
 		$("#actionDetails").append("<div>" + "Given the land fertility here, " + maxGatherers + " of people can gather here</div>");
 		$("#actionDetails").append("<div>" + "You have " + gatherers + " people gathering</div>");
@@ -59,7 +65,21 @@ ActionPanel.LoadDetails = function(unit, action) {
 			})
 		})(unit);
 	} else if (action == Action.CookAction) {
-
+		var cooks = Unit.GetAllocatedPop(unit, Action.CookAction);
+		$("#actionDetails").append("<div>Cooking allows you to process food into more nutritious meals. 1 Food is processed into 15 meals, which can feed" + 
+			"15 people. This requires 2 population and 1 wood.</div>");
+		$("#actionDetails").append("<br>");
+		$("#actionDetails").append("<div>" + "Given the stockpiles that you have, you can commit " + Unit.GetMaxCooks(unit) + " to cooking </div>");
+		$("#actionDetails").append("<div>" + "You have " + cooks + " people cooking</div>");
+		$("#actionDetails").append("<div>" + "You have " + Unit.GetAvailablePop(unit) + " people free</div>");
+		$("#actionDetails").append("<div>" + "How many would you like to cook?</div>");
+		$("#actionDetails").append("<textarea id='cookInput' rows='1' cols='10'>0</textarea>");
+		$("#actionDetails").append("<span> / " + Math.min(Unit.GetMaxCooks(unit), unit.population / 15) + "</span>");
+		(function(_unit) {
+			executeBut.click(function() {
+				ActionPanel.HandleCook(_unit);
+			})
+		})(unit);
 	} else if (action == Action.EncampAction) {
 
 	}
@@ -83,6 +103,15 @@ ActionPanel.HandleHunt = function(unit) {
 		return;
 	}
 	ActionPanel.CommitWorkers(workers, unit, Action.HuntAction);
+
+}
+
+ActionPanel.HandleCook = function(unit) {
+	var workers = $("#cookInput").val();
+	if (!ActionPanel.ValidateWorkers(workers, unit)) {
+		return;
+	}
+	ActionPanel.CommitWorkers(workers, unit, Action.CookAction);
 
 }
 

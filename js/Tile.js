@@ -95,6 +95,7 @@ Tile.GetMaxHuntingFood = function(tile) {
 	return Math.floor(tile.animals / 100) * 3;
 }
 
-Tile.GetMaxHunters = function(tile) {
-	
+Tile.GetAvailableAnimals = function(tile) {
+	return Math.floor(tile.animals / 100);
 }
+

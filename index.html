@@ -11,11 +11,13 @@
 		<script src="js/Map.js"></script>
 
 		<script src="js/Util.js"></script>
+		<script src="js/Turn.js"></script>
 
 		<script type="text/javascript">
 			window.onload = function() {
 				// note, Map needs to inited before Util! It currently has all the game startup stuff in it
 				Util.Init();
+				Turn.Init();
 
 				Map.GenerateMap();
 			}
@@ -24,7 +26,7 @@
 	<body>
 		<table>
 			<tr>
-				<td>
+				<td style="vertical-align:top">
 					<table id='map'>
 					</table>
 				</td>
@@ -47,6 +49,14 @@
 					<br>
 					<div>Current workers</div>
 					<div id='currentActions'></div>
+					<br>
+					<br>
+					<br>
+					<br>
+					<button id='endTurn'>End Turn</button>
+					<br>
+					<br>
+					<textarea id='turnSummary' readonly></textarea>
 				</td>
 			</tr>
 		</table>

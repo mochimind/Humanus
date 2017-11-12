@@ -15,3 +15,8 @@
 	top: 0;
 	left: 0;
 }
+
+#turnSummary {
+	width: 200;
+	height: 400;
+}
