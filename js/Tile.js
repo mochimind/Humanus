@@ -1,170 +1,165 @@
-var Tile = {};
+var TileConst = {};
 
-Tile.RichFertilityThreshold = 750;
-Tile.GoodFertilityThreshold = 500;
-Tile.DecentFertilityThreshold = 250;
+TileConst.RichFertilityThreshold = 750;
+TileConst.GoodFertilityThreshold = 500;
+TileConst.DecentFertilityThreshold = 250;
 
-Tile.NewRandom = function(parent) {
-	var outObj = {};
-	outObj.parent = parent;
-	typeInt = Math.round(Math.random() * 4);
+function Tile(parent) {
+	this.parent = parent;
 	var imgObj = null;
+	var typeInt = Math.floor(Math.random()*4);
 	if (typeInt == 0) {
-		outObj.terrain = "grassland";
+		this.terrain = "grassland";
 		imgObj = $(("<img src='img/grass.jpg'>"));
 	} else if (typeInt == 1) {
-		outObj.terrain = "forest";
+		this.terrain = "forest";
 		imgObj = $(("<img src='img/forest.jpg'>"));
 	} else if (typeInt == 2) {
-		outObj.terrain = "mountain";
+		this.terrain = "mountain";
 		imgObj = $(("<img src='img/mountain.png'>"));
 	} else if (typeInt == 3) {
-		outObj.terrain = "desert";
+		this.terrain = "desert";
 		imgObj = $(("<img src='img/desert.jpg'>"));
 	} else {
-		outObj.terrain = "water";
+		this.terrain = "water";
 		imgObj = $(("<img src='img/water.jpg'>"));
 	}
 	imgObj.attr("class", "mapTile");
 	parent.append(imgObj);
 
-	outObj.plants = Math.round(Math.random() * 1000);
-	outObj.animals = Math.round(Math.random() * 1000);
+	this.plants = Math.round(Math.random() * 1000);
+	this.animals = Math.round(Math.random() * 1000);
 
-	return outObj;
-}
-
-Tile.GetExploredText = function (tile) {
-	return "0%";
-}
-
-Tile.GetPlantLifeText = function (tile) {
-	if (tile.plants > Tile.RichFertilityThreshold) {
-		return "rich";
-	}
-	if (tile.plants > Tile.GoodFertilityThreshold) {
-		return "good";
-	}
-	if (tile.plants > Tile.DecentFertilityThreshold) {
-		return "decent";
-	}
-	return "poor";
-}
-
-Tile.GetAnimalText = function(tile) {
-	if (tile.animals > Tile.RichFertilityThreshold) {
-		return "rich";
-	}
-	if (tile.animals > Tile.GoodFertilityThreshold) {
-		return "good";
-	}
-	if (tile.animals > Tile.DecentFertilityThreshold) {
-		return "decent";
-	}
-	return "poor";
-}
-
-Tile.UpdateAnimals = function(tile, delta) {
-	tile.animals = Math.min(Math.max(0, tile.animals+delta),1000);
-	Map.UpdateTileInfo(tile);
-}
-
-// creates a new icon and adds it to the appropriate container object
-// NOTE: the new display object is not stored in the tile, but instead in the unit itself
-Tile.AddUnit = function(tile, unit) {
-	var charIcon = $("<img src='" + Unit.GetIconFName(unit) + "' width='50' height='50'>");
-	charIcon.attr("class", "characterTile");
-	tile.parent.append(charIcon);
-	unit.charIcon = charIcon;
-}
-
-Tile.GetMaxGatherers = function(tile) {
-	if (tile.plants > Tile.RichFertilityThreshold) {
-		return 40;
-	} else if (tile.plants > Tile.GoodFertilityThreshold) {
-		return 30;
-	} else if (tile.plants > Tile.DecentFertilityThreshold) {
-		return 20;
-	} else {
-		return 10;
-	}
-}
-
-// hunting food is calculated as follows
-// Every 100 fertility creates a random game on the tile. Each additional hunter increases the chance to catch
-// one of the game and decrease the fertility of the tile by 100. The probability is 10% per hunter
-// however, this means that each hunter has a 10% chance to catch something
-// game values: small is 1, medium is 3, large is 10. Chance of getting small is 50%, medium is 35%, large is 15%
-Tile.GetMaxHuntingFood = function(tile) {
-	// the expected value is a bit more than 3 given the math above
-	return Math.floor(tile.animals / 100) * 3;
-}
-
-Tile.GetAvailableAnimals = function(tile) {
-	return Math.floor(tile.animals / 100);
-}
-
-// note takes as arguments: the tile to be modified, a url to the icon to show, and the callback if clicked
-Tile.SetupMoveMouseOver = function(tile, icon, callback) {
-	// setup the callback to listen for the hover
-	tile.parent.on("mouseenter", {"tile": tile, "icon": icon}, Tile.HandleMoveMouseOver);
-
-	// setup other listeners - one for when tile loses focus, another for when user clicks
-	tile.parent.on("mouseleave", {"tile": tile}, Tile.HandleMoveMouseOut);
-	tile.parent.on("click", "*", {"tile": tile, "callback": callback}, Tile.HandleMoveMouseClick);
-}
-
-// handles when the tile is hovered over. in this case, the icon is shown
-Tile.HandleMoveMouseOver = function(e) {
-	var tile = e.data.tile;
-	icon = e.data.icon;
-
-	// TODO: use css classes to specify width & height
-	tile.moveIcon = $("<img src='" + icon + "' width='50' height='50'>");
-	tile.moveIcon.attr("class", "characterTile");
-	tile.parent.append(tile.moveIcon);	
-}
-
-Tile.HandleMoveMouseOut = function(e) {
-	var tile = e.data.tile;
-
-	tile.moveIcon.remove();
-	tile.moveIcon = null;
-}
-
-// removes ALL the move related mouse functions attached to the tile
-Tile.RemoveMoveMouseOver = function(e) {
-	var tile = e.data.tile;
-
-	if (tile.moveIcon != null) {
-		Tile.HandleMoveMouseOut({"data": {"tile": tile}});
+	this.getExploredText = function() {
+		return "0%";
 	}
 
-	// now remove all the event listeners we setup
-	tile.parent.off("mouseenter", Tile.HandleMoveMouseOver);
-	tile.parent.off("mouseleave", Tile.HandleMoveMouseOut);
-	tile.parent.off("click", "*", Tile.HandleMoveMouseClick);
+	this.getPlantLifeText = function() {
+		if (this.plants > TileConst.RichFertilityThreshold) {
+			return "rich";
+		}
+		if (this.plants > TileConst.GoodFertilityThreshold) {
+			return "good";
+		}
+		if (this.plants > TileConst.DecentFertilityThreshold) {
+			return "decent";
+		}
+		return "poor";		
+	}
 
-}
+	this.getAnimalText = function() {
+		if (this.animals > TileConst.RichFertilityThreshold) {
+			return "rich";
+		}
+		if (this.animals > TileConst.GoodFertilityThreshold) {
+			return "good";
+		}
+		if (this.animals > TileConst.DecentFertilityThreshold) {
+			return "decent";
+		}
+		return "poor";	
+	}
 
-Tile.HandleMoveMouseClick = function(e) {
-	var tile = e.data.tile;
-	var callback = e.data.callback;
+	this.updateAnimals = function(delta) {
+		this.animals = Math.min(Math.max(0, this.animals+delta),1000);
+		Map.UpdateTileInfo(this);
+	}
 
-	Tile.RemoveMoveMouseOver({"data": {"tile": tile}});
-	callback(tile);
-}
+	// creates a new icon and adds it to the appropriate container object
+	// NOTE: the new display object is not stored in the tile, but instead in the unit itself
+	this.addUnit = function(unit) {
+		var charIcon = $("<img src='" + Unit.GetIconFName(unit) + "' width='50' height='50'>");
+		charIcon.attr("class", "characterTile");
+		this.parent.append(charIcon);
+		unit.charIcon = charIcon;
+	}
 
-Tile.AddMoveIcon = function(tile) {
-	tile.footprintIcon = $("<img src='img/footprint.png' width='50' height='50'>");
-	tile.footprintIcon.attr("class", "characterTile");
-	tile.parent.append(tile.footprintIcon);
-}
+	this.getMaxGatherers = function() {
+		if (this.plants > TileConst.RichFertilityThreshold) {
+			return 40;
+		} else if (this.plants > TileConst.GoodFertilityThreshold) {
+			return 30;
+		} else if (this.plants > TileConst.DecentFertilityThreshold) {
+			return 20;
+		} else {
+			return 10;
+		}		
+	}
 
-Tile.RemoveMoveIcon = function(tile) {
-	if (tile.footprintIcon != null) {
-		tile.footprintIcon.remove();
-		tile.footprintIcon = null;
+	// hunting food is calculated as follows
+	// Every 100 fertility creates a random game on the tile. Each additional hunter increases the chance to catch
+	// one of the game and decrease the fertility of the tile by 100. The probability is 10% per hunter
+	// however, this means that each hunter has a 10% chance to catch something
+	// game values: small is 1, medium is 3, large is 10. Chance of getting small is 50%, medium is 35%, large is 15%
+	this.getMaxHuntingFood = function() {
+		// the expected value is a bit more than 3 given the math above
+		return Math.floor(this.animals / 100) * 3;
+	}
+
+	this.getAvailableAnimals = function() {
+		return Math.floor(this.animals / 100);
+	}
+
+	// note takes as arguments: the tile to be modified, a url to the icon to show, and the callback if clicked
+	this.setupMoveMouseOver = function(icon, callback) {
+		// setup the callback to listen for the hover
+		this.parent.on("mouseenter", {"tile": this, "icon": icon}, this.handleMoveMouseOver);
+
+		// setup other listeners - one for when tile loses focus, another for when user clicks
+		this.parent.on("mouseleave", {"tile": this}, this.handleMoveMouseOut);
+		this.parent.on("click", "*", {"tile": this, "callback": callback}, this.handleMoveMouseClick);		
+	}
+
+	// handles when the tile is hovered over. in this case, the icon is shown
+	this.handleMoveMouseOver = function(e) {
+		var tile = e.data.tile;
+		icon = e.data.icon;
+
+		// TODO: use css classes to specify width & height
+		tile.moveIcon = $("<img src='" + icon + "' width='50' height='50'>");
+		tile.moveIcon.attr("class", "characterTile");
+		tile.parent.append(tile.moveIcon);
+	}
+
+	this.handleMoveMouseOut = function(e) {
+		var tile = e.data.tile;
+
+		tile.moveIcon.remove();
+		tile.moveIcon = null;
+	}
+
+	// removes ALL the move related mouse functions attached to the tile
+	this.removeMoveMouseOver = function(e) {
+		var tile = e.data.tile;
+
+		if (tile.moveIcon != null) {
+			tile.handleMoveMouseOut({"data": {"tile": tile}});
+		}
+
+		// now remove all the event listeners we setup
+		tile.parent.off("mouseenter", tile.handleMoveMouseOver);
+		tile.parent.off("mouseleave", tile.handleMoveMouseOut);
+		tile.parent.off("click", "*", tile.handleMoveMouseClick);		
+	}
+
+	this.handleMoveMouseClick = function(e) {
+		var tile = e.data.tile;
+		var callback = e.data.callback;
+
+		tile.removeMoveMouseOver({"data": {"tile": tile}});
+		callback(tile);	
+	}
+
+	this.addMoveIcon = function() {
+		this.footprintIcon = $("<img src='img/footprint.png' width='50' height='50'>");
+		this.footprintIcon.attr("class", "characterTile");
+		this.parent.append(this.footprintIcon);
+	}
+
+	this.removeMoveIcon = function() {
+		if (this.footprintIcon != null) {
+			this.footprintIcon.remove();
+			this.footprintIcon = null;
+		}
 	}
 }
-

@@ -5,6 +5,7 @@ Action.HuntAction = "Hunt";
 Action.CookAction = "Cook";
 Action.EncampAction = "Encamp";
 Action.MoveAction = "Move";
+Action.CraftAction = "Craft";
 
 Action.HuntThreshold = 0.9;
 Action.BigGameThreshold = 0.85;
@@ -40,7 +41,7 @@ Action.RegisterMoveAction = function (unit, destination) {
 
 		// now, try to add a footprint to the tile on the path
 		var tile = Map.tileInfos[curCoords[0]][curCoords[1]];
-		Tile.AddMoveIcon(tile);
+		tile.addMoveIcon(tile);
 		traverseList.push([curCoords[0], curCoords[1]]);
 	}
 
@@ -56,7 +57,7 @@ Action.ClearMoveAction = function(action) {
 	// remove all the footprints
 	for (var i=0 ; i<action.args.length ; i++) {
 		var coord = action.args[i];
-		Tile.RemoveMoveIcon(Map.tileInfos[coord[0]][coord[1]]);
+		tile.removeMoveIcon(Map.tileInfos[coord[0]][coord[1]]);
 	}
 }
 
@@ -112,7 +113,7 @@ Action.ResolveAction = function(a) {
 		summary.harvested.wood += harvest;
 		summary.harvested.food += harvest;
 	} else if (a.action == Action.HuntAction) {
-		animalAmount = Tile.GetAvailableAnimals(tile);
+		animalAmount = tile.getAvailableAnimals();
 		if (animalAmount <= 0) {
 			return;
 		}
@@ -126,13 +127,13 @@ Action.ResolveAction = function(a) {
 					a.unit.hides += 10;
 					summary.harvested.food += 10;
 					summary.harvested.hides += 10;
-					Tile.UpdateAnimals(tile, -100);
+					tile.updateAnimals(-100);
 				} else if (animalTypeScore >= Action.MediumGameThreshold) {
 					a.unit.food += 3;
 					a.unit.hides += 3;
 					summary.harvested.food += 3;
 					summary.harvested.hides += 3;
-					Tile.UpdateAnimals(tile, -50);
+					tile.updateAnimals(-50);
 				} else {
 					a.unit.food += 1;
 					a.unit.hides += 1;
@@ -160,7 +161,7 @@ Action.ResolveAction = function(a) {
 		var dest = a.args.shift();
 		summary.moved = true;
 
-		Tile.RemoveMoveIcon(Map.tileInfos[dest[0]][dest[1]]);
+		Map.tileInfos[dest[0]][dest[1]].removeMoveIcon();
 		Map.NavigateTo(dest[0], dest[1]);
 
 		if (a.args.length == 0) {

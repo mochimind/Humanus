@@ -61,7 +61,7 @@ Unit.MoveUnit = function(unit, x, y) {
 	}
 
 	// add a new icon
-	Tile.AddUnit(tileInfo, unit);
+	tileInfo.addUnit(unit);
 }
 
 Unit.ProcessTurn = function() {
@@ -147,8 +147,6 @@ Unit.ClearAllocatedPop = function(unit) {
 }
 
 Unit.GetAllocatedPop = function(unit, type) {
-	console.log("working with: " + type);
-	console.log(unit.employed);
 	if (unit.employed[type] != null) {
 		return unit.employed[type];
 	}

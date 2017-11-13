@@ -12,7 +12,7 @@ Map.GenerateMap = function() {
 			var cellObj = $("<td class='mapCell'></td>");
 			cellObj.attr("id", "" + i + "x" + j);
 			rowObj.append(cellObj);
-			var tileInfo = Tile.NewRandom(cellObj);
+			var tileInfo = new Tile(cellObj);
 
 			if (i == 8 && j == 8) {
 				Map.curX = i;
@@ -29,9 +29,9 @@ Map.GenerateMap = function() {
 }
 
 Map.UpdateTileInfo = function(tile) {
-	$("#explored").text(Tile.GetExploredText(tile));
-	$("#plants").text(Tile.GetPlantLifeText(tile));
-	$("#animals").text(Tile.GetAnimalText(tile));
+	$("#explored").text(tile.getExploredText());
+	$("#plants").text(tile.getPlantLifeText());
+	$("#animals").text(tile.getAnimalText());
 }
 
 Map.NavigateUp = function() {
@@ -79,7 +79,7 @@ Map.EnableMoveMouseOver = function(icon, callback) {
 	for (var i=0 ; i<Map.tileInfos.length ; i++) {
 		for (var j=0 ; j<Map.tileInfos[i].length ; j++) {
 			var tile = Map.tileInfos[i][j];
-			Tile.SetupMoveMouseOver(tile, icon, function(_tile) {
+			tile.setupMoveMouseOver(icon, function(_tile) {
 				callback(_tile);
 				Map.DisableMoveMouseOver();
 			});
@@ -91,7 +91,7 @@ Map.DisableMoveMouseOver = function() {
 	for (var i=0 ; i<Map.tileInfos.length ; i++) {
 		for (var j=0 ; j<Map.tileInfos.length ; j++) {
 			var tile = Map.tileInfos[i][j];
-			Tile.RemoveMoveMouseOver({"data": {"tile": tile}});
+			tile.removeMoveMouseOver({"data": {"tile": tile}});
 		}
 	}
 }

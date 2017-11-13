@@ -32,7 +32,7 @@ ActionPanel.LoadDetails = function(e) {
 
 		// prepopulate the number of gatherers
 		gatherers = Unit.GetAllocatedPop(unit, Action.GatherAction);
-		maxGatherers = Tile.GetMaxGatherers(tile);
+		maxGatherers = tile.getMaxGatherers();
 
 		// TODO: need to refactor these into separate files - maybe have a hunt file that creates a list of
 		// elements which actionpanel then populates?
@@ -99,7 +99,7 @@ ActionPanel.LoadDetails = function(e) {
 
 ActionPanel.HandleGather = function(unit) {
 	workers = $("#gatherInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, Unit.GetAllocatedPop(unit, Action.GatherAction), Tile.GetMaxGatherers(Unit.GetTile(unit)))) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, Unit.GetAllocatedPop(unit, Action.GatherAction), Unit.GetTile(unit).getMaxGatherers())) {
 		return;
 	}
 
