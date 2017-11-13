@@ -57,7 +57,7 @@ Action.ClearMoveAction = function(action) {
 	// remove all the footprints
 	for (var i=0 ; i<action.args.length ; i++) {
 		var coord = action.args[i];
-		tile.removeMoveIcon(Map.tileInfos[coord[0]][coord[1]]);
+		Map.tileInfos[coord[0]][coord[1]].removeMoveIcon();
 	}
 }
 
