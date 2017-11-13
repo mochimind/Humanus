@@ -23,13 +23,13 @@ Turn.PopulateSummary = function(unit) {
 	isFirst = true;
 	for (var tok in Unit.resources) {
 		var resource = Unit.resources[tok];
-		if (Math.round(summary.harvested[resource]) != 0) {
+		if (summary.harvested[resource] != 0) {
 			if (isFirst) {
 				isFirst = false;
 			} else {
 				harvestStr += ", ";
 			}
-			harvestStr += Math.round(summary.harvested[resource]) + " " + resource;
+			harvestStr += summary.harvested[resource].toFixed(1) + " " + resource;
 		}
 	}
 	if (!isFirst) {
@@ -41,13 +41,13 @@ Turn.PopulateSummary = function(unit) {
 	consumedStr = "consumed: ";
 	for (var tok in Unit.resources) {
 		var resource = Unit.resources[tok];
-		if (Math.round(summary.consumed[resource]) != 0) {
+		if (summary.consumed[resource] != 0) {
 			if (isFirst) {
 				isFirst = false;
 			} else {
 				consumedStr += ", ";
 			}
-			consumedStr += Math.round(summary.consumed[resource]) + " " + resource;
+			consumedStr += summary.consumed[resource].toFixed(1) + " " + resource;
 		}
 	}
 	if (!isFirst) {
