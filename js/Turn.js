@@ -16,5 +16,5 @@ Turn.EndTurn = function() {
 }
 
 Turn.AddSummary = function(summary) {
-	$("#turnSummary").append(summary + "\n");
+	$("#turnSummary").append("<li>" + summary + "</li>");
 }

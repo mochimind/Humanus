@@ -31,32 +31,29 @@
 					</table>
 				</td>
 				<td style="vertical-align:top" width="300">
-					Explored: <span id='explored'></span><br>
-					Plant life: <span id='plants'></span><br>
-					Animal life: <span id='animals'></span><br>
-					<br>
-					Unit: <span id='unit'></span><br>
-					Population: <span id='population'></span><br>
-					Food: <span id='food'></span><br>
-					Wood: <span id='wood'></span><br>
-					<br>
-					<br>
-					<div id='actionPanel'></div>
-					<br>
-					<br>
-					<div id='actionDetails'></div>
-					<br>
-					<br>
-					<div>Current workers</div>
-					<div id='currentActions'></div>
-					<br>
-					<br>
-					<br>
-					<br>
+					<div class="banner rightPanel">Tile:</div>
+					<div id="tileSummary" class="rightPanel dataPanel">
+						Explored: <span id='explored'></span><br>
+						Plant life: <span id='plants'></span><br>
+						Animal life: <span id='animals'></span><br>
+					</div>
+					<div class="banner rightPanel">Unit</div>
+					<div id="unitSummary" class="rightPanel dataPanel">
+						Type: <span id='unit'></span><br>
+						Population: <span id='population'></span><br>
+						Food: <span id='food'></span><br>
+						Wood: <span id='wood'></span><br>
+					</div>
+					<div class="banner rightPanel">Actions: </div>
+					<div id="jobSummary" class="rightPanel dataPanel">
+						<div id='actionPanel'></div>
+						<div id='actionDetails'></div>
+						<div>Current workers</div>
+						<div id='currentActions'></div>
+					</div>
 					<button id='endTurn'>End Turn</button>
-					<br>
-					<br>
-					<textarea id='turnSummary' readonly></textarea>
+					<div class="banner rightPanel">Turn Summary: </div>
+					<div id="turnSummary" class="rightPanel dataPanel"></div>
 				</td>
 			</tr>
 		</table>
