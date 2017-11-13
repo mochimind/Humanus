@@ -104,7 +104,7 @@ Action.GetRegisteredActions = function(unit) {
 // note: this function doesn't check if the action is valid, it just resolves its effects
 // it's assumed that before the action was added someone has done the checking to make sure it's valid
 Action.ResolveAction = function(a) {
-	var tile = Unit.GetTile(a.unit);
+	var tile = a.unit.getTile();
 	var summary = a.unit.turnSummary;
 	if (a.action == Action.GatherAction) {
 		harvest = a.workers/10;
@@ -189,5 +189,5 @@ Action.ClearActions = function(unit) {
 	}
 
 	Action.actions = newArr;
-	Unit.ClearAllocatedPop(unit);
+	unit.clearAllocatedPop();
 }

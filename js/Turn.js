@@ -7,22 +7,22 @@ Turn.Init = function() {
 Turn.EndTurn = function() {
 	$("#turnSummary").empty();
 	ActionPanel.UnloadDetails();
-	Unit.ClearTurnSummaries();
+	UnitConst.ClearTurnSummaries();
 	for (var i=0 ; i<Action.actions.length ; i++) {
 		var pAct = Action.actions[i];
 		Action.ResolveAction(pAct);
 	}
-	Unit.ProcessTurn();
-	ActionPanel.UpdateCurrentActions(Unit.selectedUnit);
-	Turn.PopulateSummary(Unit.selectedUnit);
+	UnitConst.ProcessTurn();
+	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
+	Turn.PopulateSummary(UnitConst.selectedUnit);
 }
 
 Turn.PopulateSummary = function(unit) {
 	var summary = unit.turnSummary;
 	harvestStr = "harvested: ";
 	isFirst = true;
-	for (var tok in Unit.resources) {
-		var resource = Unit.resources[tok];
+	for (var tok in UnitConst.resources) {
+		var resource = UnitConst.resources[tok];
 		if (summary.harvested[resource] != 0) {
 			if (isFirst) {
 				isFirst = false;
@@ -39,8 +39,8 @@ Turn.PopulateSummary = function(unit) {
 
 	isFirst = true;
 	consumedStr = "consumed: ";
-	for (var tok in Unit.resources) {
-		var resource = Unit.resources[tok];
+	for (var tok in UnitConst.resources) {
+		var resource = UnitConst.resources[tok];
 		if (summary.consumed[resource] != 0) {
 			if (isFirst) {
 				isFirst = false;

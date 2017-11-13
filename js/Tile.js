@@ -68,7 +68,7 @@ function Tile(parent) {
 	// creates a new icon and adds it to the appropriate container object
 	// NOTE: the new display object is not stored in the tile, but instead in the unit itself
 	this.addUnit = function(unit) {
-		var charIcon = $("<img src='" + Unit.GetIconFName(unit) + "' width='50' height='50'>");
+		var charIcon = $("<img src='" + unit.getIconFName() + "' width='50' height='50'>");
 		charIcon.attr("class", "characterTile");
 		this.parent.append(charIcon);
 		unit.charIcon = charIcon;

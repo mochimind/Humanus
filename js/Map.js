@@ -18,8 +18,8 @@ Map.GenerateMap = function() {
 				Map.curX = i;
 				Map.curY = j;
 
-				var newUnit = Unit.CreateUnit("tribal", 20, {"food": 100});
-				Unit.SelectUnit(newUnit);
+				var newUnit = new Unit("tribal", 20, {"food": 100});
+				newUnit.selectUnit();
 			}
 			rowInfos.push(tileInfo);
 		}
@@ -67,7 +67,7 @@ Map.NavigateTo = function(x, y) {
 	Map.curX = x;
 	Map.curY = y;
 	Map.UpdateTileInfo(Map.tileInfos[x][y]);
-	Unit.MoveUnit(Unit.selectedUnit, x, y);
+	UnitConst.selectedUnit.moveUnit(x, y);
 
 	Util.StartBlink();
 }
