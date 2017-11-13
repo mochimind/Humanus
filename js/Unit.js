@@ -5,12 +5,12 @@ Unit.selectedUnit = null;
 Unit.growthRate = 0.01;
 Unit.mortalityRate = 0.006;
 
-Unit.CreateUnit = function(type) {
+Unit.CreateUnit = function(type, population, resources) {
 	var newUnit = {};
-	newUnit.population = 100;
-	newUnit.food = 100;
-	newUnit.wood = 0;
-	newUnit.hides = 0;
+	newUnit.population = population;
+	newUnit.food = resources.food != null ? resources.food : 0;
+	newUnit.wood = resources.wood != null ? resources.wood : 0;
+	newUnit.hides = resources.hides != null ? resources.hides : 0;
 	newUnit.meals = 0;
 	newUnit.type = type;
 	newUnit.x = 0;
