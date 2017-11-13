@@ -41,15 +41,21 @@
 					<div id="unitSummary" class="rightPanel dataPanel">
 						Type: <span id='unit'></span><br>
 						Population: <span id='population'></span><br>
-						Food: <span id='food'></span><br>
-						Wood: <span id='wood'></span><br>
+						<table width="100%">
+							<tr>
+								<td class="resourceCell"><img src="img/food.png" class="resourceIcon"><span id="foodAmount" class="resourceAmount"></span></td>
+								<td class="resourceCell"><img src="img/wood.png" class="resourceIcon"><span id="woodAmount" class="resourceAmount"></span></td>
+								<td class="resourceCell"><img src="img/hides.png" class="resourceIcon"><span id="hidesAmount" class="resourceAmount"></span></td>
+							</tr>
+						</table>
 					</div>
 					<div class="banner rightPanel">Actions: </div>
 					<div id="jobSummary" class="rightPanel dataPanel">
 						<div id='actionPanel'></div>
 						<div id='actionDetails'></div>
-						<div>Current workers</div>
-						<div id='currentActions'></div>
+						<div id='currentActions'>
+							<div id='currentActionsHeader'>Current Actions</div>
+						</div>
 					</div>
 					<button id='endTurn'>End Turn</button>
 					<div class="banner rightPanel">Turn Summary: </div>

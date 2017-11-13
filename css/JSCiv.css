@@ -63,3 +63,24 @@
 .workerInput{
 	resize: none;
 }
+
+.resourceCell {
+	width: 33%
+}
+
+.resourceIcon {
+	width: 20px;
+	height: 20px;
+}
+
+.resourceAmount {
+	margin-left: 4px;
+}
+
+#currentActionsHeader {
+	border-bottom-width: 2px;
+	border-bottom-color: blue;
+	border-bottom-style: solid;
+	margin-top: 3px;
+	margin-bottom: 2px;
+}

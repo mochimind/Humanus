@@ -44,8 +44,9 @@ Unit.GetIconFName = function(unit) {
 Unit.LoadInfo = function(unit) {
 	$("#unit").text(unit.type);
 	$("#population").text(Math.floor(unit.population));
-	$("#food").text(Math.floor(unit.food));
-	$("#wood").text(Math.floor(unit.wood));
+	$("#foodAmount").text(Math.floor(unit.food));
+	$("#woodAmount").text(Math.floor(unit.wood));
+	$("#hidesAmount").text(Math.floor(unit.hides));
 }
 
 Unit.MoveUnit = function(unit, x, y) {
