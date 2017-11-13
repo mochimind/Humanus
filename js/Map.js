@@ -70,8 +70,6 @@ Map.NavigateTo = function(x, y) {
 	Unit.MoveUnit(Unit.selectedUnit, x, y);
 
 	Util.StartBlink();
-
-	Unit.ProcessTurn();
 }
 
 // sets mode so that whenever a map tile is moused over, "icon" is displayed

@@ -104,55 +104,59 @@ Action.GetRegisteredActions = function(unit) {
 // it's assumed that before the action was added someone has done the checking to make sure it's valid
 Action.ResolveAction = function(a) {
 	var tile = Unit.GetTile(a.unit);
+	var summary = a.unit.turnSummary;
 	if (a.action == Action.GatherAction) {
-		a.unit.food += a.workers / 10;
-		a.unit.wood += a.workers / 10;
-		Turn.AddSummary(a.workers/10 + " food and wood gathered");
+		harvest = a.workers/10;
+		a.unit.food += harvest;
+		a.unit.wood += harvest;
+		summary.harvested.wood += harvest;
+		summary.harvested.food += harvest;
 	} else if (a.action == Action.HuntAction) {
-		var hasHunted = false;
-		var animalAmount = Tile.GetAvailableAnimals(tile);
+		animalAmount = Tile.GetAvailableAnimals(tile);
 		if (animalAmount <= 0) {
-			Turn.AddSummary("Hunters return home emptyhanded");
 			return;
 		}
 		for (var j=0 ; j<a.workers ; j++) {
-			var score = Math.random();
+			score = Math.random();
 			if (score > Action.HuntThreshold) {
-				hasHunted = true;
 				animalAmount--;
-				var animalTypeScore = Math.random();
+				animalTypeScore = Math.random();
 				if (animalTypeScore >= Action.BigGameThreshold) {
 					a.unit.food += 10;
 					a.unit.hides += 10;
-					Turn.AddSummary("10 food and hides were brought in by the hunters");
+					summary.harvested.food += 10;
+					summary.harvested.hides += 10;
 				} else if (animalTypeScore >= Action.MediumGameThreshold) {
 					a.unit.food += 3;
 					a.unit.hides += 3;
-					Turn.AddSummary("3 food and hides were brought in by the hunters");
+					summary.harvested.food += 3;
+					summary.harvested.hides += 3;
 				} else {
 					a.unit.food += 1;
 					a.unit.hides += 1;
-					Turn.AddSummary("1 food and hide was brought in by the hunters");
+					summary.harvested.food += 1;
+					summary.harvested.hides += 1;
 				}
 				if (animalAmount <= 0) {
 					return;
 				}
 			}
 		}
-		if (!hasHunted) {
-			Turn.AddSummary("Hunters return home emptyhanded");
-		}
 	} else if (a.action == Action.CookAction) {
-		a.unit.meals += a.workers / 2 * 15;
-		a.unit.food -= a.workers / 2;
-		a.unit.wood -= a.workers / 2;
-		Turn.AddSummary(a.unit.meals + " meals were prepared by the cooks");
+		harvest = a.workers / 2
+		a.unit.meals += harvest * 15;
+		a.unit.food -= harvest;
+		a.unit.wood -= harvest;
+		summary.harvested.meals += harvest*15;
+		summary.consumed.food += harvest;
+		summary.consumed.wood += harvest;
 
 		// next turn we may not be able to have the same number of cooks due to resource constraints
 		// assign the max possible
 		a.workers = Math.min(a.workers, Math.floor(a.unit.food*2), Math.floor(a.unit.wood*2));
 	} else if (a.action == Action.MoveAction) {
 		var dest = a.args.shift();
+		summary.moved = true;
 
 		Tile.RemoveMoveIcon(Map.tileInfos[dest[0]][dest[1]]);
 		Map.NavigateTo(dest[0], dest[1]);

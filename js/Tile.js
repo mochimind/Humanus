@@ -7,7 +7,7 @@ Tile.DecentFertilityThreshold = 250;
 Tile.NewRandom = function(parent) {
 	var outObj = {};
 	outObj.parent = parent;
-	var typeInt = Math.round(Math.random() * 4);
+	typeInt = Math.round(Math.random() * 4);
 	var imgObj = null;
 	if (typeInt == 0) {
 		outObj.terrain = "grassland";
@@ -112,7 +112,7 @@ Tile.SetupMoveMouseOver = function(tile, icon, callback) {
 // handles when the tile is hovered over. in this case, the icon is shown
 Tile.HandleMoveMouseOver = function(e) {
 	var tile = e.data.tile;
-	var icon = e.data.icon;
+	icon = e.data.icon;
 
 	// TODO: use css classes to specify width & height
 	tile.moveIcon = $("<img src='" + icon + "' width='50' height='50'>");

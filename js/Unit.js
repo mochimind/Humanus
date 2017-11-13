@@ -1,6 +1,7 @@
 var Unit = {};
 
 Unit.units = [];
+Unit.resources = ["food", "wood", "hides", "meals"];
 Unit.selectedUnit = null;
 Unit.growthRate = 0.01;
 Unit.mortalityRate = 0.006;
@@ -31,7 +32,6 @@ Unit.SelectUnit = function(unit) {
 	Unit.selectedUnit = unit;
 	ActionPanel.LoadUnit(unit);
 	Unit.LoadInfo(unit);
-
 }
 
 Unit.GetIconFName = function(unit) {
@@ -68,22 +68,23 @@ Unit.ProcessTurn = function() {
 	// each person needs to eat 0.1 food a turn
 	for (var i=0 ; i<Unit.units.length ; i++) {
 		var curUnit = Unit.units[i];
-		var hungryPeople = curUnit.population;
+		oldPopulation = curUnit.population;
+		hungryPeople = curUnit.population;
+		var summary = curUnit.turnSummary;
 
 		// try to feed them with meals
 		hungryPeople -= curUnit.meals;
-		Turn.AddSummary(Math.min(hungryPeople, curUnit.meals) + " meals were consumed");
+		summary.consumed.meals += curUnit.meals;
 
 		// now feed the remainder with raw food
 		if (hungryPeople > 0) {
+			summary.consumed.food += Math.min(hungryPeople/10, curUnit.food);
 			curUnit.food -= hungryPeople/10;
-			Turn.AddSummary(Math.min(hungryPeople/10, curUnit.food) + " food was consumed");
 		}
 
 		// if there are any people that went hungry, they die from starvation
 		if (curUnit.food < 0) {
 			curUnit.population += curUnit.food;
-			Turn.AddSummary(Math.floor(curUnit.food * -1) + " people died from starvation");
 		}
 
 		// we now need to factor in spoilage
@@ -93,20 +94,35 @@ Unit.ProcessTurn = function() {
 		// process population growth
 		if (curUnit.food >= 0) {
 			curUnit.population += curUnit.population * Unit.growthRate;
-			Turn.AddSummary(Math.floor(curUnit.population * Unit.growthRate) + " people were born");
 		}
 		// process population death. Note: population death happens regardless of food situation
 		curUnit.population -= curUnit.population * Unit.mortalityRate;
-		Turn.AddSummary(Math.floor(curUnit.population * Unit.mortalityRate) + " people passed away naturally");
 
 		// we are using food as a counter to measure starvation
 		// however, it needs to be reset at the end of the turn
 		if (curUnit.food < 0) {
 			curUnit.food = 0;			
 		}
+		if (Math.floor(oldPopulation) != Math.floor(curUnit.population)) {
+			summary.population = Math.floor(curUnit.population) - Math.floor(oldPopulation);
+		}
 	}
 
 	Unit.LoadInfo(Unit.selectedUnit);
+}
+
+Unit.ClearTurnSummaries = function() {
+	for (var i=0 ; i<Unit.units.length ; i++) {
+		Unit.units[i].turnSummary = {
+			'harvested': {}, 
+			'consumed': {}, 
+			'population': 0, 
+			'moved': false};
+		for (var j=0 ; j<Unit.resources.length ; j++) {
+			Unit.units[i].turnSummary.harvested[Unit.resources[j]] = 0;
+			Unit.units[i].turnSummary.consumed[Unit.resources[j]] = 0;
+		}
+	}
 }
 
 Unit.GetTile = function(unit) {
@@ -139,6 +155,6 @@ Unit.GetAllocatedPop = function(unit, type) {
 
 // TODO: this likely is better in its own "Cooking" document so as not to clutter unit code
 Unit.GetMaxCooks = function(unit) {
-	var maxNeeded = Math.floor(unit.population / 15);
+	maxNeeded = Math.floor(unit.population / 15);
 	return Math.min(maxNeeded, Math.floor(unit.food), Math.floor(unit.wood)) * 2;
 }
