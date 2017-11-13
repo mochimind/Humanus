@@ -125,6 +125,10 @@ Unit.AllocatePop = function(unit, pop, type) {
 	unit.employed[type] = pop;
 }
 
+Unit.ClearAllocatedPop = function(unit) {
+	unit.employed = {};
+}
+
 Unit.GetAllocatedPop = function(unit, type) {
 	if (unit.employed[type] != null) {
 		return unit.employed[type];

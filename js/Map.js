@@ -98,5 +98,18 @@ Map.DisableMoveMouseOver = function() {
 	}
 }
 
+// returns coords in an array [x,y]
+Map.GetTileCoords = function(tile) {
+	for (var i=0 ; i<Map.tileInfos.length ; i++) {
+		for (var j=0 ; j<Map.tileInfos[i].length ; j++) {
+			if (Map.tileInfos[i][j] == tile) {
+				return [i,j];
+			}
+		}
+	}
+
+	return null;
+}
+
 
 

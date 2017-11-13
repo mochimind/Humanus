@@ -150,3 +150,16 @@ Tile.HandleMoveMouseClick = function(e) {
 	callback(tile);
 }
 
+Tile.AddMoveIcon = function(tile) {
+	tile.footprintIcon = $("<img src='img/footprint.png' width='50' height='50'>");
+	tile.footprintIcon.attr("class", "characterTile");
+	tile.parent.append(tile.footprintIcon);
+}
+
+Tile.RemoveMoveIcon = function(tile) {
+	if (tile.footprintIcon != null) {
+		tile.footprintIcon.remove();
+		tile.footprintIcon = null;
+	}
+}
+

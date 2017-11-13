@@ -40,16 +40,16 @@ Util.StartBlink = function() {
 Util.HandleKeyPress = function (e) {
 	if(e.keyCode == 37) {
 		// up button
-		Map.NavigateUp();
+		//Map.NavigateUp();
 	} else if (e.keyCode == 38) {
 		// up button
-		Map.NavigateLeft();
+		//Map.NavigateLeft();
 	} else if (e.keyCode == 39) {
 		// down button
-		Map.NavigateDown();
+		//Map.NavigateDown();
 	} else if (e.keyCode == 40) {
 		// right button
-		Map.NavigateRight();
+		//Map.NavigateRight();
 	}
 }
 

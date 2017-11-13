@@ -12,6 +12,66 @@ Action.MediumGameThreshold = 0.5;
 
 Action.actions = [];
 
+
+// move actions are quite different from production actions - they also cancel all other actions
+// destination is a coord in the format [x,y]
+Action.RegisterMoveAction = function (unit, destination) {
+	// clear all other actions for this unit
+	Action.ClearActions(unit);
+
+	// create a path to move to the destination coordinate from the unit's current coordinate
+	// for each stop on the path, create an icon and add the tile to the args list
+	var curCoords = [unit.x, unit.y];
+	var traverseList = [];
+	while (curCoords[0] != destination[0] || curCoords[1] != destination[1]) {
+		// try to move 1 tile closer to the destination on both the x and y coordinate
+		if (curCoords[0] > destination[0]) {
+			curCoords[0]--;
+		}
+		if (curCoords[0] < destination[0]) {
+			curCoords[0]++;
+		}
+		if (curCoords[1] > destination[1]) {
+			curCoords[1]--;
+		}
+		if (curCoords[1] < destination[1]) {
+			curCoords[1]++;
+		}
+
+		// now, try to add a footprint to the tile on the path
+		var tile = Map.tileInfos[curCoords[0]][curCoords[1]];
+		Tile.AddMoveIcon(tile);
+		traverseList.push([curCoords[0], curCoords[1]]);
+	}
+
+	Action.actions.push({
+		'unit': unit,
+		'action': Action.MoveAction,
+		'args': traverseList
+	});
+
+}
+
+Action.ClearMoveAction = function(action) {
+	// remove all the footprints
+	for (var i=0 ; i<action.args.length ; i++) {
+		var coord = action.args[i];
+		Tile.RemoveMoveIcon(Map.tileInfos[coord[0]][coord[1]]);
+	}
+}
+
+Action.RemoveMoveAction = function(unit) {
+	for (var i=0 ; i<Action.actions.length ; i++) {
+		var act = Action.actions[i];
+		if (act.unit == unit && act.action == Action.MoveAction) {
+			Action.ClearMoveAction(act);
+			Action.actions.splice(i,1);
+			// there should only be one so we can optimize away the rest of this loop
+			return;
+		}
+	}
+}
+
 Action.RegisterAction = function(unit, action, workers) {
 	for (var i=0 ; i<Action.actions.length ; i++) {
 		var iter = Action.actions[i]
@@ -91,6 +151,16 @@ Action.ResolveAction = function(a) {
 		// next turn we may not be able to have the same number of cooks due to resource constraints
 		// assign the max possible
 		a.workers = Math.min(a.workers, Math.floor(a.unit.food*2), Math.floor(a.unit.wood*2));
+	} else if (a.action == Action.MoveAction) {
+		var dest = a.args.shift();
+
+		Tile.RemoveMoveIcon(Map.tileInfos[dest[0]][dest[1]]);
+		Map.NavigateTo(dest[0], dest[1]);
+
+		if (a.args.length == 0) {
+			Action.RemoveMoveAction(a.unit);
+			return;
+		}
 	}
 }
 
@@ -102,8 +172,15 @@ Action.ClearActions = function(unit) {
 		var poppy = Action.actions.pop();
 		if (poppy.unit != unit) {
 			newArr.push(poppy);
+		} else {
+			// all non-movement actions don't need special treatment - they just won't be run
+			// for movements, we need to clear footprints
+			if (poppy.action == Action.MoveAction) {
+				Action.ClearMoveAction(poppy);
+			}	
 		}
 	}
 
 	Action.actions = newArr;
+	Unit.ClearAllocatedPop(unit);
 }

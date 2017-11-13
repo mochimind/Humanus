@@ -21,6 +21,7 @@ ActionPanel.LoadDetails = function(e) {
 	var action = e.data.action;
 
 	ActionPanel.ClearDetails();
+
 	var executeBut = $("<button>Do it</button>");
 	var tile = Unit.GetTile(unit);
 	if (action == Action.GatherAction) {
@@ -100,6 +101,7 @@ ActionPanel.HandleGather = function(unit) {
 	}
 
 	ActionPanel.CommitWorkers(workers, unit, Action.GatherAction);
+	ActionPanel.ClearDetails();
 }
 
 ActionPanel.HandleHunt = function(unit) {
@@ -108,7 +110,7 @@ ActionPanel.HandleHunt = function(unit) {
 		return;
 	}
 	ActionPanel.CommitWorkers(workers, unit, Action.HuntAction);
-
+	ActionPanel.ClearDetails();
 }
 
 ActionPanel.HandleCook = function(unit) {
@@ -117,11 +119,23 @@ ActionPanel.HandleCook = function(unit) {
 		return;
 	}
 	ActionPanel.CommitWorkers(workers, unit, Action.CookAction);
-
+	ActionPanel.ClearDetails();
 }
 
+// TODO: handleMove doesn't accept arg unit like other actionpanel handlers - make things consistent please
 ActionPanel.HandleMove = function(tile) {
-	alert("moving!!!");
+	var tCoords = Map.GetTileCoords(tile);
+	var unit = Unit.selectedUnit;
+	if (tCoords[0] == unit.x && tCoords == unit.y) {
+		// user clicked on their current location, but let's continue to allow them to navigate
+		alert("you're already there!");
+		Map.EnableMoveMouseOver(Unit.GetIconFName(unit), ActionPanel.HandleMove);
+		return;
+	}
+
+	Action.RegisterMoveAction(unit, tCoords);
+	ActionPanel.ClearDetails();
+	ActionPanel.UpdateCurrentActions(unit);
 }
 
 ActionPanel.HandleMoveCancel = function() {
@@ -157,6 +171,9 @@ ActionPanel.ValidateWorkers = function(workers, unit, maxWorkers) {
 
 // this does all the administrative work of registering an action
 ActionPanel.CommitWorkers = function(_workers, unit, action) {
+	// first make sure there are no movements going on - we can't have workers and movement
+	Action.RemoveMoveAction(unit);
+
 	// make sure we get rid of decimals
 	var workers = Math.floor(_workers);
 
@@ -172,7 +189,11 @@ ActionPanel.UpdateCurrentActions = function(unit) {
 	$("#currentActions").empty();
 	var actions = Action.GetRegisteredActions(unit);
 	for (var i=0 ; i<actions.length ; i++) {
-		$("#currentActions").append("<div>" + actions[i].action + ": " + actions[i].workers);
+		if (actions[i].action != Action.MoveAction) {
+			$("#currentActions").append("<div>" + actions[i].action + ": " + actions[i].args);
+		} else {
+			$("#currentActions").append("<div>" + actions[i].action + ": " + actions[i].args.length + " tiles");
+		}
 	}
 }
 
