@@ -74,4 +74,29 @@ Map.NavigateTo = function(x, y) {
 	Unit.ProcessTurn();
 }
 
+// sets mode so that whenever a map tile is moused over, "icon" is displayed
+// When the user clicks on any tile, callback is called
+// callback must take argument of tile object
+Map.EnableMoveMouseOver = function(icon, callback) {
+	for (var i=0 ; i<Map.tileInfos.length ; i++) {
+		for (var j=0 ; j<Map.tileInfos[i].length ; j++) {
+			var tile = Map.tileInfos[i][j];
+			Tile.SetupMoveMouseOver(tile, icon, function(_tile) {
+				callback(_tile);
+				Map.DisableMoveMouseOver();
+			});
+		}
+	}
+}
+
+Map.DisableMoveMouseOver = function() {
+	for (var i=0 ; i<Map.tileInfos.length ; i++) {
+		for (var j=0 ; j<Map.tileInfos.length ; j++) {
+			var tile = Map.tileInfos[i][j];
+			Tile.RemoveMoveMouseOver({"data": {"tile": tile}});
+		}
+	}
+}
+
+
 

@@ -4,6 +4,7 @@ Action.GatherAction = "Gather";
 Action.HuntAction = "Hunt";
 Action.CookAction = "Cook";
 Action.EncampAction = "Encamp";
+Action.MoveAction = "Move";
 
 Action.HuntThreshold = 0.1;
 Action.BigGameThreshold = 0.85;

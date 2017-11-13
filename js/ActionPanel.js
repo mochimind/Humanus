@@ -6,11 +6,7 @@ ActionPanel.LoadUnit = function(unit) {
 		var newBut = $("<button>" + unit.actions[i] + "</button>");
 
 		// set the onclick action - we need to pass the right args to it
-		(function(_unit, _action) {
-			newBut.click(function() {
-				ActionPanel.LoadDetails(_unit, _action);
-			})
-		})(unit, unit.actions[i]);
+		newBut.on("click", {"unit": unit, "action": unit.actions[i]}, ActionPanel.LoadDetails);
 
 		$("#actionPanel").append(newBut);
 	}
@@ -20,7 +16,10 @@ ActionPanel.ClearDetails = function() {
 	$("#actionDetails").empty();	
 }
 
-ActionPanel.LoadDetails = function(unit, action) {
+ActionPanel.LoadDetails = function(e) {
+	var unit = e.data.unit;
+	var action = e.data.action;
+
 	ActionPanel.ClearDetails();
 	var executeBut = $("<button>Do it</button>");
 	var tile = Unit.GetTile(unit);
@@ -32,11 +31,11 @@ ActionPanel.LoadDetails = function(unit, action) {
 
 		// TODO: need to refactor these into separate files - maybe have a hunt file that creates a list of
 		// elements which actionpanel then populates?
-		$("#actionDetails").append("<div>Gathering yields a small amount of food and wood (1 of each per 10 people working)</div>");
-		$("#actionDetails").append("<div>" + "Given the land fertility here, " + maxGatherers + " of people can gather here</div>");
-		$("#actionDetails").append("<div>" + "You have " + gatherers + " people gathering</div>");
-		$("#actionDetails").append("<div>" + "You have " + Unit.GetAvailablePop(unit) + " people free</div>");
-		$("#actionDetails").append("<div>" + "How many would you like to gather here?</div>");
+		$("#actionDetails").append("<p>Gathering yields a small amount of food and wood (1 of each per 10 people working)</p>");
+		$("#actionDetails").append("<p>" + "Given the land fertility here, " + maxGatherers + " of people can gather here</p>");
+		$("#actionDetails").append("<p>" + "You have " + gatherers + " people gathering</p>");
+		$("#actionDetails").append("<p>" + "You have " + Unit.GetAvailablePop(unit) + " people free</p>");
+		$("#actionDetails").append("<p>" + "How many would you like to gather here?</p>");
 
 		$("#actionDetails").append("<textarea id='gatherInput' rows='1' cols='10'>" + gatherers + "</textarea>");
 
@@ -51,13 +50,13 @@ ActionPanel.LoadDetails = function(unit, action) {
 		})(unit);
 	} else if (action == Action.HuntAction) {
 		var hunters = Unit.GetAllocatedPop(unit, Action.HuntAction);
-		$("#actionDetails").append("<div>Hunting allows you to catch game that gives a lot of food and hides." + 
-			"However, your hunters are not guaranteed to land a catch! Each hunter has a 10% chance to net a catch will net you on average 3 food & hides</div>");
+		$("#actionDetails").append("<p>Hunting allows you to catch game that gives a lot of food and hides." + 
+			"However, your hunters are not guaranteed to land a catch! Each hunter has a 10% chance to net a catch will net you on average 3 food & hides</p>");
 		$("#actionDetails").append("<br>");
-		$("#actionDetails").append("<div>" + "Given the animals here, you can expect to catch on average " + Tile.GetMaxHuntingFood(tile) + " food from this location </div>");
-		$("#actionDetails").append("<div>" + "You have " + hunters + " people hunting</div>");
-		$("#actionDetails").append("<div>" + "You have " + Unit.GetAvailablePop(unit) + " people free</div>");
-		$("#actionDetails").append("<div>" + "How many would you like to hunt here?</div>");
+		$("#actionDetails").append("<p>" + "Given the animals here, you can expect to catch on average " + Tile.GetMaxHuntingFood(tile) + " food from this location </p>");
+		$("#actionDetails").append("<p>" + "You have " + hunters + " people hunting</p>");
+		$("#actionDetails").append("<p>" + "You have " + Unit.GetAvailablePop(unit) + " people free</p>");
+		$("#actionDetails").append("<p>" + "How many would you like to hunt here?</p>");
 		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10'>0</textarea>");
 		(function(_unit) {
 			executeBut.click(function() {
@@ -66,13 +65,13 @@ ActionPanel.LoadDetails = function(unit, action) {
 		})(unit);
 	} else if (action == Action.CookAction) {
 		var cooks = Unit.GetAllocatedPop(unit, Action.CookAction);
-		$("#actionDetails").append("<div>Cooking allows you to process food into more nutritious meals. 1 Food is processed into 15 meals, which can feed" + 
-			"15 people. This requires 2 population and 1 wood.</div>");
+		$("#actionDetails").append("<p>Cooking allows you to process food into more nutritious meals. 1 Food is processed into 15 meals, which can feed" + 
+			"15 people. This requires 2 population and 1 wood.</p>");
 		$("#actionDetails").append("<br>");
-		$("#actionDetails").append("<div>" + "Given the stockpiles that you have, you can commit " + Unit.GetMaxCooks(unit) + " to cooking </div>");
-		$("#actionDetails").append("<div>" + "You have " + cooks + " people cooking</div>");
-		$("#actionDetails").append("<div>" + "You have " + Unit.GetAvailablePop(unit) + " people free</div>");
-		$("#actionDetails").append("<div>" + "How many would you like to cook?</div>");
+		$("#actionDetails").append("<p>" + "Given the stockpiles that you have, you can commit " + Unit.GetMaxCooks(unit) + " to cooking </p>");
+		$("#actionDetails").append("<p>" + "You have " + cooks + " people cooking</p>");
+		$("#actionDetails").append("<p>" + "You have " + Unit.GetAvailablePop(unit) + " people free</p>");
+		$("#actionDetails").append("<p>" + "How many would you like to cook?</p>");
 		$("#actionDetails").append("<textarea id='cookInput' rows='1' cols='10'>0</textarea>");
 		$("#actionDetails").append("<span> / " + Math.min(Unit.GetMaxCooks(unit), unit.population / 15) + "</span>");
 		(function(_unit) {
@@ -82,6 +81,12 @@ ActionPanel.LoadDetails = function(unit, action) {
 		})(unit);
 	} else if (action == Action.EncampAction) {
 
+	} else if (action == Action.MoveAction) {
+		$("#actionDetails").append("<p>Click on the tile you want to move to. Note: it will take 1 turn to move each tile and all your people will not be able " + 
+			"to do anything else</p>");
+		executeBut.text("Cancel");
+		executeBut.on("click", ActionPanel.HandleMoveCancel);
+		Map.EnableMoveMouseOver(Unit.GetIconFName(unit), ActionPanel.HandleMove);
 	}
 	$("#actionDetails").append("<br>");		
 	$("#actionDetails").append(executeBut);
@@ -113,6 +118,15 @@ ActionPanel.HandleCook = function(unit) {
 	}
 	ActionPanel.CommitWorkers(workers, unit, Action.CookAction);
 
+}
+
+ActionPanel.HandleMove = function(tile) {
+	alert("moving!!!");
+}
+
+ActionPanel.HandleMoveCancel = function() {
+	Map.DisableMoveMouseOver();
+	ActionPanel.ClearDetails();
 }
 
 // make sure they didn't input anything funky

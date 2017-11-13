@@ -99,3 +99,54 @@ Tile.GetAvailableAnimals = function(tile) {
 	return Math.floor(tile.animals / 100);
 }
 
+// note takes as arguments: the tile to be modified, a url to the icon to show, and the callback if clicked
+Tile.SetupMoveMouseOver = function(tile, icon, callback) {
+	// setup the callback to listen for the hover
+	tile.parent.on("mouseenter", {"tile": tile, "icon": icon}, Tile.HandleMoveMouseOver);
+
+	// setup other listeners - one for when tile loses focus, another for when user clicks
+	tile.parent.on("mouseleave", {"tile": tile}, Tile.HandleMoveMouseOut);
+	tile.parent.on("click", "*", {"tile": tile, "callback": callback}, Tile.HandleMoveMouseClick);
+}
+
+// handles when the tile is hovered over. in this case, the icon is shown
+Tile.HandleMoveMouseOver = function(e) {
+	var tile = e.data.tile;
+	var icon = e.data.icon;
+
+	// TODO: use css classes to specify width & height
+	tile.moveIcon = $("<img src='" + icon + "' width='50' height='50'>");
+	tile.moveIcon.attr("class", "characterTile");
+	tile.parent.append(tile.moveIcon);	
+}
+
+Tile.HandleMoveMouseOut = function(e) {
+	var tile = e.data.tile;
+
+	tile.moveIcon.remove();
+	tile.moveIcon = null;
+}
+
+// removes ALL the move related mouse functions attached to the tile
+Tile.RemoveMoveMouseOver = function(e) {
+	var tile = e.data.tile;
+
+	if (tile.moveIcon != null) {
+		Tile.HandleMoveMouseOut({"data": {"tile": tile}});
+	}
+
+	// now remove all the event listeners we setup
+	tile.parent.off("mouseenter", Tile.HandleMoveMouseOver);
+	tile.parent.off("mouseleave", Tile.HandleMoveMouseOut);
+	tile.parent.off("click", "*", Tile.HandleMoveMouseClick);
+
+}
+
+Tile.HandleMoveMouseClick = function(e) {
+	var tile = e.data.tile;
+	var callback = e.data.callback;
+
+	Tile.RemoveMoveMouseOver({"data": {"tile": tile}});
+	callback(tile);
+}
+

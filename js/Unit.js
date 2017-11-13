@@ -19,7 +19,7 @@ Unit.CreateUnit = function(type) {
 	newUnit.employed = {};
 
 	if (type == "tribal") {
-		newUnit.actions = [Action.GatherAction, Action.HuntAction, Action.CookAction, Action.EncampAction];
+		newUnit.actions = [Action.MoveAction, Action.GatherAction, Action.HuntAction, Action.CookAction, Action.EncampAction];
 	}
 
 	Unit.units.push(newUnit);
