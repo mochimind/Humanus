@@ -56,7 +56,6 @@ ActionPanel.LoadDetails = function(e) {
 		})(unit);
 	} else if (action == Action.HuntAction) {
 		hunters = Unit.GetAllocatedPop(unit, Action.HuntAction);
-		$("#actionDetails").append("<p>" + "Given the animals here, you can expect to catch on average " + Tile.GetMaxHuntingFood(tile) + " food from this location </p>");
 		$("#actionDetails").append("<p>" + "You have " + hunters + " people hunting<br>You have " + Unit.GetAvailablePop(unit) + " people free</p>");
 		$("#actionDetails").append("<p>" + "How many would you like to hunt here?</p>");
 		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10' class='workerInput'>" + hunters + "</textarea>");
@@ -64,7 +63,8 @@ ActionPanel.LoadDetails = function(e) {
 		$("#actionDetails").append(executeBut);
 		$("#actionDetails").append(cancelBut);
 		$("#actionDetails").append("<p>Hunting allows you to catch game that gives a lot of food and hides." + 
-			"However, your hunters are not guaranteed to land a catch! Each hunter has a 10% chance to net a catch will net you on average 3 food & hides</p>");
+			"However, your hunters are not guaranteed to land a catch! Each hunter has a 10% chance to net a catch will net you on average 3 food & hides." + 
+			" Remember, constant hunting in a certain area will deplete the stocks of animals in that area. </p>");
 		(function(_unit) {
 			executeBut.click(function() {
 				ActionPanel.HandleHunt(_unit);
@@ -74,7 +74,7 @@ ActionPanel.LoadDetails = function(e) {
 		cooks = Unit.GetAllocatedPop(unit, Action.CookAction);
 		$("#actionDetails").append("<p>" + "You have " + cooks + " people cooking<br>You have " + Unit.GetAvailablePop(unit) + " people free</p>");
 		$("#actionDetails").append("<p>" + "How many would you like to cook?</p>");
-		$("#actionDetails").append("<textarea id='cookInput' rows='1' cols='10' class='workerInput'>0</textarea>");
+		$("#actionDetails").append("<textarea id='cookInput' rows='1' cols='10' class='workerInput'>" + cooks + "</textarea>");
 		$("#actionDetails").append("<span> / max: " + Math.min(Unit.GetMaxCooks(unit), Math.ceil(unit.population / 15 * 2)) + " given conditions</span>");
 		$("#actionDetails").append(executeBut);
 		$("#actionDetails").append(cancelBut);
@@ -99,7 +99,7 @@ ActionPanel.LoadDetails = function(e) {
 
 ActionPanel.HandleGather = function(unit) {
 	workers = $("#gatherInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, Tile.GetMaxGatherers(Unit.GetTile(unit)))) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, Unit.GetAllocatedPop(unit, Action.GatherAction), Tile.GetMaxGatherers(Unit.GetTile(unit)))) {
 		return;
 	}
 
@@ -109,7 +109,7 @@ ActionPanel.HandleGather = function(unit) {
 
 ActionPanel.HandleHunt = function(unit) {
 	workers = $("#huntInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit)) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, Unit.GetAllocatedPop(unit, Action.HuntAction))) {
 		return;
 	}
 	ActionPanel.CommitWorkers(workers, unit, Action.HuntAction);
@@ -118,7 +118,7 @@ ActionPanel.HandleHunt = function(unit) {
 
 ActionPanel.HandleCook = function(unit) {
 	workers = $("#cookInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit)) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, Unit.GetAllocatedPop(unit, Action.CookAction), Math.min(Unit.GetMaxCooks(unit), Math.ceil(unit.population / 15 * 2)))) {
 		return;
 	}
 	ActionPanel.CommitWorkers(workers, unit, Action.CookAction);
@@ -147,7 +147,7 @@ ActionPanel.HandleMoveCancel = function() {
 }
 
 // make sure they didn't input anything funky
-ActionPanel.ValidateWorkers = function(workers, unit, maxWorkers) {
+ActionPanel.ValidateWorkers = function(workers, unit, curWorkers, maxWorkers) {
 	if (isNaN(workers)) {
 		alert("please input a valid number");
 		return false;
@@ -158,7 +158,7 @@ ActionPanel.ValidateWorkers = function(workers, unit, maxWorkers) {
 		return false;
 	}
 
-	if (workers > Unit.GetAvailablePop(unit)) {
+	if (workers-curWorkers > Unit.GetAvailablePop(unit)) {
 		alert ("not enough population to allocate!");
 		return false;
 	}

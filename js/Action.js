@@ -6,7 +6,7 @@ Action.CookAction = "Cook";
 Action.EncampAction = "Encamp";
 Action.MoveAction = "Move";
 
-Action.HuntThreshold = 0.1;
+Action.HuntThreshold = 0.9;
 Action.BigGameThreshold = 0.85;
 Action.MediumGameThreshold = 0.5;
 
@@ -126,11 +126,13 @@ Action.ResolveAction = function(a) {
 					a.unit.hides += 10;
 					summary.harvested.food += 10;
 					summary.harvested.hides += 10;
+					Tile.UpdateAnimals(tile, -100);
 				} else if (animalTypeScore >= Action.MediumGameThreshold) {
 					a.unit.food += 3;
 					a.unit.hides += 3;
 					summary.harvested.food += 3;
 					summary.harvested.hides += 3;
+					Tile.UpdateAnimals(tile, -50);
 				} else {
 					a.unit.food += 1;
 					a.unit.hides += 1;

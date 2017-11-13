@@ -64,6 +64,11 @@ Tile.GetAnimalText = function(tile) {
 	return "poor";
 }
 
+Tile.UpdateAnimals = function(tile, delta) {
+	tile.animals = Math.min(Math.max(0, tile.animals+delta),1000);
+	Map.UpdateTileInfo(tile);
+}
+
 // creates a new icon and adds it to the appropriate container object
 // NOTE: the new display object is not stored in the tile, but instead in the unit itself
 Tile.AddUnit = function(tile, unit) {
