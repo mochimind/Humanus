@@ -59,7 +59,7 @@ ActionPanel.LoadDetails = function(e) {
 		$("#actionDetails").append("<p>" + "Given the animals here, you can expect to catch on average " + Tile.GetMaxHuntingFood(tile) + " food from this location </p>");
 		$("#actionDetails").append("<p>" + "You have " + hunters + " people hunting<br>You have " + Unit.GetAvailablePop(unit) + " people free</p>");
 		$("#actionDetails").append("<p>" + "How many would you like to hunt here?</p>");
-		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10' class='workerInput'>0</textarea>");
+		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10' class='workerInput'>" + hunters + "</textarea>");
 		$("#actionDetails").append("<br>");
 		$("#actionDetails").append(executeBut);
 		$("#actionDetails").append(cancelBut);
@@ -148,7 +148,6 @@ ActionPanel.HandleMoveCancel = function() {
 
 // make sure they didn't input anything funky
 ActionPanel.ValidateWorkers = function(workers, unit, maxWorkers) {
-	console.log("validating: " + workers + "," + unit + "," + maxWorkers);
 	if (isNaN(workers)) {
 		alert("please input a valid number");
 		return false;

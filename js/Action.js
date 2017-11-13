@@ -75,7 +75,7 @@ Action.RemoveMoveAction = function(unit) {
 Action.RegisterAction = function(unit, action, workers) {
 	for (var i=0 ; i<Action.actions.length ; i++) {
 		var iter = Action.actions[i]
-		if (iter.unit == unit && unit.action == action) {
+		if (iter.unit == unit && iter.action == action) {
 			iter.workers = workers;
 			return;
 		}
