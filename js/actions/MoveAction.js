@@ -51,7 +51,7 @@ MoveAction.prototype.removeAction = function() {
 
 MoveAction.prototype.resolveAction = function() {
 	var dest = this.args.shift();
-	this.unit.turnSummary.moved = true;
+	this.unit.moved = true;
 
 	Map.tileInfos[dest[0]][dest[1]].removeMoveIcon();
 	Map.NavigateTo(dest[0], dest[1]);

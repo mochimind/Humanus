@@ -22,22 +22,16 @@ HuntAction.prototype.resolveAction = function() {
 			animalAmount--;
 			animalTypeScore = Math.random();
 			if (animalTypeScore >= HuntConst.BigGameThreshold) {
-				this.unit.food += 10;
-				this.unit.hides += 10;
-				this.unit.turnSummary.harvested.food += 10;
-				this.unit.turnSummary.harvested.hides += 10;
+				this.unit.resources.produce(ResourceConst.foodType,10);
+				this.unit.resources.produce(ResourceConst.hidesType, 10);
 				tile.updateAnimals(-100);
 			} else if (animalTypeScore >= HuntConst.MediumGameThreshold) {
-				this.unit.food += 3;
-				this.unit.hides += 3;
-				this.unit.turnSummary.harvested.food += 3;
-				this.unit.turnSummary.harvested.hides += 3;
+				this.unit.resources.produce(ResourceConst.foodType,3);
+				this.unit.resources.produce(ResourceConst.hidesType, 3);
 				tile.updateAnimals(-50);
 			} else {
-				this.unit.food += 1;
-				this.unit.hides += 1;
-				this.unit.turnSummary.harvested.food += 1;
-				this.unit.turnSummary.harvested.hides += 1;
+				this.unit.resources.produce(ResourceConst.foodType,1);
+				this.unit.resources.produce(ResourceConst.hidesType, 1);
 			}
 			if (animalAmount <= 0) {
 				return;
@@ -46,17 +40,22 @@ HuntAction.prototype.resolveAction = function() {
 	}
 }
 
+// TODO: change type to be a function, rather than an argument
 HuntAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
-	this.unit.allocatePop(0, this.type);
+	this.unit.population.unallocatePop(this.type);
 }
+
+
+
+///////////////////////////// static functions
 
 HuntConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	var unit = UnitConst.selectedUnit;
 	var tile = unit.getTile();
 
-	hunters = unit.getAllocatedPop(ActionConst.HuntAction);
-	parent.append("<p>" + "You have " + hunters + " people hunting<br>You have " + unit.getAvailablePop() + " people free</p>");
+	hunters = unit.population.getAllocatedPop(ActionConst.HuntAction);
+	parent.append("<p>" + "You have " + hunters + " people hunting<br>You have " + unit.population.getAvailablePop(ActionConst.HuntAction) + " who can hunt</p>");
 	parent.append("<p>" + "How many would you like to hunt here?</p>");
 	parent.append("<textarea id='huntInput' rows='1' cols='10' class='workerInput'>" + hunters + "</textarea>");
 	parent.append("<br>");
@@ -73,14 +72,14 @@ HuntConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 HuntConst.HandleSubmit = function() {
 	var unit = UnitConst.selectedUnit;
 	workers = $("#huntInput").val();
-	if (!unit.validateWorkers(workers, ActionConst.HuntAction)) {
+	if (!unit.population.validateWorkers(workers, ActionConst.HuntAction)) {
 		return;
 	}
 
 	// first make sure there are no movements going on - we can't have workers and movement
 	MoveConst.RemoveMoveAction(unit);
 
-	unit.commitWorkers(workers, ActionConst.HuntAction);
+	unit.population.allocatePop(workers, ActionConst.HuntAction);
 	ActionConst.CreateAction(ActionConst.HuntAction, unit, workers);
 	ActionPanel.HandleSubmit();
 }

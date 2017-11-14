@@ -18,7 +18,11 @@ Map.GenerateMap = function() {
 				Map.curX = i;
 				Map.curY = j;
 
-				var newUnit = new Unit("tribal", 20, {"food": 100});
+				var res = new ResourceBundle();
+				res.produce(ResourceConst.foodType, 100);
+
+				var newUnit = new MobileUnit(res);
+				newUnit.population.addPopulation(DemographicConst.PrimitiveType, 20);
 				newUnit.selectUnit();
 			}
 			rowInfos.push(tileInfo);

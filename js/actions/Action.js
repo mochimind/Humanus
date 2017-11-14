@@ -22,7 +22,8 @@ Action.prototype.addOrReplaceAction = function() {
 	for (var i=0 ; i<this.unit.actions.length ; i++) {
 		var iter = this.unit.actions[i];
 		if (iter.type == this.type) {
-			iter.removeAction();
+			iter.args = this.args;
+			return;
 		}
 	}
 	this.unit.actions.push(this);

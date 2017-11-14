@@ -2,11 +2,12 @@ var ActionPanel = {};
 
 ActionPanel.LoadUnit = function(unit) {
 	$("#actionPanel").empty();
-	for (var i=0 ; i<unit.possibleActions.length ; i++) {
-		var newBut = $("<button>" + unit.possibleActions[i] + "</button>");
+	var possibleActions = unit.population.getPossibleActions();
+	for (var i=0 ; i<possibleActions.length ; i++) {
+		var newBut = $("<button>" + possibleActions[i] + "</button>");
 
 		// set the onclick action - we need to pass the right args to it
-		newBut.on("click", {"unit": unit, "action": unit.possibleActions[i]}, ActionPanel.LoadDetails);
+		newBut.on("click", {"unit": unit, "action": possibleActions[i]}, ActionPanel.LoadDetails);
 
 		$("#actionPanel").append(newBut);
 	}
