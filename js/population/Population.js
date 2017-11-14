@@ -148,17 +148,3 @@ Population.prototype.validateWorkers = function(workers, action) {
 
 }
 
-Population.prototype.getPossibleActions = function() {
-	var actionList = [];
-	for (var i=0; i<this.data.length ; i++) {
-		var processActions = this.data[i].getActions();
-		for (const tok in processActions) {
-			if (!actionList.includes(processActions[tok])) {
-				actionList.push(processActions[tok]);
-			}
-		}
-	}
-
-	return actionList;
-}
-

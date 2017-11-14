@@ -1,8 +1,6 @@
 
 function MobileUnit(resources) {
 	Unit.call(this, resources);
-
-	this.possibleActions = [ActionConst.MoveAction, ActionConst.EncampAction];
 }
 
 MobileUnit.prototype = Object.create(Unit.prototype);
@@ -14,4 +12,8 @@ MobileUnit.prototype.getIconFName = function() {
 
 MobileUnit.prototype.getType = function() {
 	return UnitConst.mobileType;
+}
+
+MobileUnit.prototype.possibleActions = function() {
+	return [ActionConst.MoveAction, ActionConst.EncampAction];
 }

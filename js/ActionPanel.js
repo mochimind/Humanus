@@ -2,7 +2,7 @@ var ActionPanel = {};
 
 ActionPanel.LoadUnit = function(unit) {
 	$("#actionPanel").empty();
-	var possibleActions = unit.population.getPossibleActions();
+	var possibleActions = unit.getPossibleActions();
 	for (var i=0 ; i<possibleActions.length ; i++) {
 		var newBut = $("<button>" + possibleActions[i] + "</button>");
 

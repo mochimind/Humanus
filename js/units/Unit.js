@@ -79,6 +79,31 @@ Unit.prototype.getTurnSummary = function() {
 	return outArr;
 }
 
+Unit.prototype.possibleActions = function() {
+	return [];
+}
+
+Unit.prototype.getPossibleActions = function() {
+	var actionList = [];
+	for (var i=0; i<this.population.data.length ; i++) {
+		var processActions = this.population.data[i].getActions();
+		for (const tok in processActions) {
+			if (!actionList.includes(processActions[tok])) {
+				actionList.push(processActions[tok]);
+			}
+		}
+	}
+	var processActions = this.possibleActions();
+
+	for (var i=0 ; i<processActions.length ; i++) {
+		if (!actionList.includes(processActions[i])) {
+			actionList.push(processActions[i]);
+		}
+	}
+
+	return actionList;
+}
+
 Unit.prototype.processTurn = function() {
 	this.population.processTurn();
 	this.resources.processTurn();
