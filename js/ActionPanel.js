@@ -2,11 +2,11 @@ var ActionPanel = {};
 
 ActionPanel.LoadUnit = function(unit) {
 	$("#actionPanel").empty();
-	for (var i=0 ; i<unit.actions.length ; i++) {
-		var newBut = $("<button>" + unit.actions[i] + "</button>");
+	for (var i=0 ; i<unit.possibleActions.length ; i++) {
+		var newBut = $("<button>" + unit.possibleActions[i] + "</button>");
 
 		// set the onclick action - we need to pass the right args to it
-		newBut.on("click", {"unit": unit, "action": unit.actions[i]}, ActionPanel.LoadDetails);
+		newBut.on("click", {"unit": unit, "action": unit.possibleActions[i]}, ActionPanel.LoadDetails);
 
 		$("#actionPanel").append(newBut);
 	}
@@ -28,10 +28,9 @@ ActionPanel.LoadDetails = function(e) {
 	var cancelBut = $("<button>Cancel</button>");
 	cancelBut.on("click", ActionPanel.UnloadDetails);
 	var tile = unit.getTile();
-	if (action == Action.GatherAction) {
-
+	if (action == ActionConst.GatherAction) {
 		// prepopulate the number of gatherers
-		gatherers = unit.getAllocatedPop(Action.GatherAction);
+		gatherers = unit.getAllocatedPop(ActionConst.GatherAction);
 		maxGatherers = tile.getMaxGatherers();
 
 		// TODO: need to refactor these into separate files - maybe have a hunt file that creates a list of
@@ -54,8 +53,8 @@ ActionPanel.LoadDetails = function(e) {
 				ActionPanel.HandleGather(_unit);
 			})
 		})(unit);
-	} else if (action == Action.HuntAction) {
-		hunters = unit.getAllocatedPop(Action.HuntAction);
+	} else if (action == ActionConst.HuntAction) {
+		hunters = unit.getAllocatedPop(ActionConst.HuntAction);
 		$("#actionDetails").append("<p>" + "You have " + hunters + " people hunting<br>You have " + unit.getAvailablePop() + " people free</p>");
 		$("#actionDetails").append("<p>" + "How many would you like to hunt here?</p>");
 		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10' class='workerInput'>" + hunters + "</textarea>");
@@ -70,8 +69,8 @@ ActionPanel.LoadDetails = function(e) {
 				ActionPanel.HandleHunt(_unit);
 			})
 		})(unit);
-	} else if (action == Action.CookAction) {
-		cooks = unit.getAllocatedPop(Action.CookAction);
+	} else if (action == ActionConst.CookAction) {
+		cooks = unit.getAllocatedPop(ActionConst.CookAction);
 		$("#actionDetails").append("<p>" + "You have " + cooks + " people cooking<br>You have " + unit.getAvailablePop() + " people free</p>");
 		$("#actionDetails").append("<p>" + "How many would you like to cook?</p>");
 		$("#actionDetails").append("<textarea id='cookInput' rows='1' cols='10' class='workerInput'>" + cooks + "</textarea>");
@@ -85,9 +84,9 @@ ActionPanel.LoadDetails = function(e) {
 				ActionPanel.HandleCook(_unit);
 			})
 		})(unit);
-	} else if (action == Action.EncampAction) {
+	} else if (action == ActionConst.EncampAction) {
 
-	} else if (action == Action.MoveAction) {
+	} else if (action == ActionConst.MoveAction) {
 		$("#actionDetails").append("<p>Click on the tile you want to move to. Note: it will take 1 turn to move each tile and all your people will not be able " + 
 			"to do anything else</p>");
 		$("#actionDetails").append(executeBut);
@@ -99,29 +98,29 @@ ActionPanel.LoadDetails = function(e) {
 
 ActionPanel.HandleGather = function(unit) {
 	workers = $("#gatherInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(Action.GatherAction), unit.getTile().getMaxGatherers())) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(ActionConst.GatherAction), unit.getTile().getMaxGatherers())) {
 		return;
 	}
 
-	ActionPanel.CommitWorkers(workers, unit, Action.GatherAction);
+	ActionPanel.CommitWorkers(workers, unit, ActionConst.GatherAction);
 	ActionPanel.UnloadDetails();
 }
 
 ActionPanel.HandleHunt = function(unit) {
 	workers = $("#huntInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(Action.HuntAction))) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(ActionConst.HuntAction))) {
 		return;
 	}
-	ActionPanel.CommitWorkers(workers, unit, Action.HuntAction);
+	ActionPanel.CommitWorkers(workers, unit, ActionConst.HuntAction);
 	ActionPanel.UnloadDetails();
 }
 
 ActionPanel.HandleCook = function(unit) {
 	workers = $("#cookInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(Action.CookAction), Math.min(unit.getMaxCooks(), Math.ceil(unit.population / 15 * 2)))) {
+	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(ActionConst.CookAction), Math.min(unit.getMaxCooks(), Math.ceil(unit.population / 15 * 2)))) {
 		return;
 	}
-	ActionPanel.CommitWorkers(workers, unit, Action.CookAction);
+	ActionPanel.CommitWorkers(workers, unit, ActionConst.CookAction);
 	ActionPanel.UnloadDetails();
 }
 
@@ -136,7 +135,7 @@ ActionPanel.HandleMove = function(tile) {
 		return;
 	}
 
-	Action.RegisterMoveAction(unit, tCoords);
+	new MoveAction(unit, tCoords);
 	ActionPanel.UnloadDetails();
 	ActionPanel.UpdateCurrentActions(unit);
 }
@@ -174,13 +173,13 @@ ActionPanel.ValidateWorkers = function(workers, unit, curWorkers, maxWorkers) {
 // this does all the administrative work of registering an action
 ActionPanel.CommitWorkers = function(_workers, unit, action) {
 	// first make sure there are no movements going on - we can't have workers and movement
-	Action.RemoveMoveAction(unit);
+	MoveConst.RemoveMoveAction(unit);
 
 	// make sure we get rid of decimals
 	workers = Math.floor(_workers);
 
 	unit.allocatePop(workers, action);
-	Action.RegisterAction(unit, action, workers);
+	ActionConst.CreateAction(action, unit, _workers);
 	$("#actionDetails").empty();
 
 	ActionPanel.UpdateCurrentActions(unit);
@@ -190,12 +189,14 @@ ActionPanel.CommitWorkers = function(_workers, unit, action) {
 ActionPanel.UpdateCurrentActions = function(unit) {
 	$("#currentActions").empty();
 	$("#currentActions").append("<div id='currentActionsHeader'>Current Actions</div>");
-	var actions = Action.GetRegisteredActions(unit);
+	var actions = ActionConst.GetActions(unit);
 	for (var i=0 ; i<actions.length ; i++) {
-		if (actions[i].action != Action.MoveAction) {
-			$("#currentActions").append("<div>" + actions[i].action + ": " + actions[i].workers + "</div>");
+		if (actions[i].type != ActionConst.MoveAction) {
+			if (actions[i].args != 0) {
+				$("#currentActions").append("<div>" + actions[i].type + ": " + actions[i].args + "</div>");				
+			}
 		} else {
-			$("#currentActions").append("<div>" + actions[i].action + ": " + actions[i].args.length + " tiles</div>");
+			$("#currentActions").append("<div>" + actions[i].type + ": " + actions[i].args.length + " tiles</div>");
 		}
 	}
 }

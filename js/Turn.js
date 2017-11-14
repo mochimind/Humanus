@@ -8,10 +8,7 @@ Turn.EndTurn = function() {
 	$("#turnSummary").empty();
 	ActionPanel.UnloadDetails();
 	UnitConst.ClearTurnSummaries();
-	for (var i=0 ; i<Action.actions.length ; i++) {
-		var pAct = Action.actions[i];
-		Action.ResolveAction(pAct);
-	}
+
 	UnitConst.ProcessTurn();
 	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
 	Turn.PopulateSummary(UnitConst.selectedUnit);

@@ -17,10 +17,10 @@ function Unit(type, population, resources) {
 	this.y = 0;
 	this.allocatedPop = 0;
 	this.employed = {};
-	console.log(this);
+	this.actions = [];
 
 	if (type == "tribal") {
-		this.actions = [Action.MoveAction, Action.GatherAction, Action.HuntAction, Action.CookAction, Action.EncampAction];
+		this.possibleActions = [ActionConst.MoveAction, ActionConst.GatherAction, ActionConst.HuntAction, ActionConst.CookAction, ActionConst.EncampAction];
 	}
 
 	UnitConst.units.push(this);
@@ -161,8 +161,10 @@ UnitConst.ClearTurnSummaries = function() {
 UnitConst.ProcessTurn = function() {
 	// each person needs to eat 0.1 food a turn
 	for (var i=0 ; i<UnitConst.units.length ; i++) {
+		ActionConst.ProcessActions(UnitConst.units[i]);
 		UnitConst.units[i].processTurn();
 	}
 
 	UnitConst.selectedUnit.loadInfo();
 }
+
