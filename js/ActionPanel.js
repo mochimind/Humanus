@@ -29,161 +29,25 @@ ActionPanel.LoadDetails = function(e) {
 	cancelBut.on("click", ActionPanel.UnloadDetails);
 	var tile = unit.getTile();
 	if (action == ActionConst.GatherAction) {
-		// prepopulate the number of gatherers
-		gatherers = unit.getAllocatedPop(ActionConst.GatherAction);
-		maxGatherers = tile.getMaxGatherers();
-
-		// TODO: need to refactor these into separate files - maybe have a hunt file that creates a list of
-		// elements which actionpanel then populates?
-		$("#actionDetails").append("<p>" + "You have " + gatherers + " people gathering <br>You have " + unit.getAvailablePop() + " people free</p>");
-		$("#actionDetails").append("<p>" + "How many would you like to gather here?</p>");
-
-		$("#actionDetails").append("<textarea id='gatherInput' rows='1' cols='10' class='workerInput'>" + gatherers + "</textarea>");
-
-		// here we calculate the effective max based on available population, and what the tile can support
-		// note, we need to add the current gatherers to the allocatable to get the actual allocatable
-		effectiveMaxGatherers = Math.min(maxGatherers, unit.getAvailablePop() + gatherers);
-		$("#actionDetails").append("<span> / max: " + effectiveMaxGatherers + " given conditions</span>");
-		$("#actionDetails").append(executeBut);
-		$("#actionDetails").append(cancelBut);
-		$("#actionDetails").append("<p>Gathering yields a small amount of food and wood (1 of each per 10 people working)." + 
-			" More people can gainfully work the land if the plant life is plentiful in the area. </p>");
-		(function(_unit) {
-			executeBut.click(function() {
-				ActionPanel.HandleGather(_unit);
-			})
-		})(unit);
+		GatherConst.ExpandDetails($("#actionDetails"), executeBut, cancelBut);
 	} else if (action == ActionConst.HuntAction) {
-		hunters = unit.getAllocatedPop(ActionConst.HuntAction);
-		$("#actionDetails").append("<p>" + "You have " + hunters + " people hunting<br>You have " + unit.getAvailablePop() + " people free</p>");
-		$("#actionDetails").append("<p>" + "How many would you like to hunt here?</p>");
-		$("#actionDetails").append("<textarea id='huntInput' rows='1' cols='10' class='workerInput'>" + hunters + "</textarea>");
-		$("#actionDetails").append("<br>");
-		$("#actionDetails").append(executeBut);
-		$("#actionDetails").append(cancelBut);
-		$("#actionDetails").append("<p>Hunting allows you to catch game that gives a lot of food and hides." + 
-			"However, your hunters are not guaranteed to land a catch! Each hunter has a 10% chance to net a catch will net you on average 3 food & hides." + 
-			" Remember, constant hunting in a certain area will deplete the stocks of animals in that area. </p>");
-		(function(_unit) {
-			executeBut.click(function() {
-				ActionPanel.HandleHunt(_unit);
-			})
-		})(unit);
+		HuntConst.ExpandDetails($("#actionDetails"), executeBut, cancelBut);
 	} else if (action == ActionConst.CookAction) {
-		cooks = unit.getAllocatedPop(ActionConst.CookAction);
-		$("#actionDetails").append("<p>" + "You have " + cooks + " people cooking<br>You have " + unit.getAvailablePop() + " people free</p>");
-		$("#actionDetails").append("<p>" + "How many would you like to cook?</p>");
-		$("#actionDetails").append("<textarea id='cookInput' rows='1' cols='10' class='workerInput'>" + cooks + "</textarea>");
-		$("#actionDetails").append("<span> / max: " + Math.min(unit.getMaxCooks(), Math.ceil(unit.population / 15 * 2)) + " given conditions</span>");
-		$("#actionDetails").append(executeBut);
-		$("#actionDetails").append(cancelBut);
-		$("#actionDetails").append("<p>Cooking allows you to process food into more nutritious meals. 1 Food is processed into 15 meals, which can feed" + 
-			"15 people. This requires 2 population and 1 wood.</p>");
-		(function(_unit) {
-			executeBut.click(function() {
-				ActionPanel.HandleCook(_unit);
-			})
-		})(unit);
+		CookConst.ExpandDetails($("#actionDetails"), executeBut, cancelBut);
 	} else if (action == ActionConst.EncampAction) {
 
 	} else if (action == ActionConst.MoveAction) {
-		$("#actionDetails").append("<p>Click on the tile you want to move to. Note: it will take 1 turn to move each tile and all your people will not be able " + 
-			"to do anything else</p>");
-		$("#actionDetails").append(executeBut);
-		executeBut.text("Cancel");
-		executeBut.on("click", ActionPanel.HandleMoveCancel);
-		Map.EnableMoveMouseOver(unit.getIconFName(), ActionPanel.HandleMove);
+		MoveConst.ExpandDetails($("#actionDetails"), executeBut, cancelBut);
 	}
 }
 
-ActionPanel.HandleGather = function(unit) {
-	workers = $("#gatherInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(ActionConst.GatherAction), unit.getTile().getMaxGatherers())) {
-		return;
-	}
-
-	ActionPanel.CommitWorkers(workers, unit, ActionConst.GatherAction);
+ActionPanel.HandleCancel = function() {
 	ActionPanel.UnloadDetails();
 }
 
-ActionPanel.HandleHunt = function(unit) {
-	workers = $("#huntInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(ActionConst.HuntAction))) {
-		return;
-	}
-	ActionPanel.CommitWorkers(workers, unit, ActionConst.HuntAction);
+ActionPanel.HandleSubmit = function() {
+	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
 	ActionPanel.UnloadDetails();
-}
-
-ActionPanel.HandleCook = function(unit) {
-	workers = $("#cookInput").val();
-	if (!ActionPanel.ValidateWorkers(workers, unit, unit.getAllocatedPop(ActionConst.CookAction), Math.min(unit.getMaxCooks(), Math.ceil(unit.population / 15 * 2)))) {
-		return;
-	}
-	ActionPanel.CommitWorkers(workers, unit, ActionConst.CookAction);
-	ActionPanel.UnloadDetails();
-}
-
-// TODO: handleMove doesn't accept arg unit like other actionpanel handlers - make things consistent please
-ActionPanel.HandleMove = function(tile) {
-	var tCoords = Map.GetTileCoords(tile);
-	var unit = UnitConst.selectedUnit;
-	if (tCoords[0] == unit.x && tCoords == unit.y) {
-		// user clicked on their current location, but let's continue to allow them to navigate
-		alert("you're already there!");
-		Map.EnableMoveMouseOver(unit.getIconFName(), ActionPanel.HandleMove);
-		return;
-	}
-
-	new MoveAction(unit, tCoords);
-	ActionPanel.UnloadDetails();
-	ActionPanel.UpdateCurrentActions(unit);
-}
-
-ActionPanel.HandleMoveCancel = function() {
-	Map.DisableMoveMouseOver();
-	ActionPanel.UnloadDetails();
-}
-
-// make sure they didn't input anything funky
-ActionPanel.ValidateWorkers = function(workers, unit, curWorkers, maxWorkers) {
-	if (isNaN(workers)) {
-		alert("please input a valid number");
-		return false;
-	}
-
-	if (workers < 0) {
-		alert ("please input a positive number");
-		return false;
-	}
-
-	if (workers-curWorkers > unit.getAvailablePop()) {
-		alert ("not enough population to allocate!");
-		return false;
-	}
-
-	if (maxWorkers != null && workers > maxWorkers) {
-		alert("can't have that many workers here!");
-		return false;
-	}
-
-	return true;
-}
-
-// this does all the administrative work of registering an action
-ActionPanel.CommitWorkers = function(_workers, unit, action) {
-	// first make sure there are no movements going on - we can't have workers and movement
-	MoveConst.RemoveMoveAction(unit);
-
-	// make sure we get rid of decimals
-	workers = Math.floor(_workers);
-
-	unit.allocatePop(workers, action);
-	ActionConst.CreateAction(action, unit, _workers);
-	$("#actionDetails").empty();
-
-	ActionPanel.UpdateCurrentActions(unit);
-
 }
 
 ActionPanel.UpdateCurrentActions = function(unit) {

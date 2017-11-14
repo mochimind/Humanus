@@ -45,6 +45,10 @@ Action.prototype.resolveAction = function(){
 	console.log("error: resolve action isn't implemented for type: " + this.type);
 }
 
+Action.prototype.expandDetails = function(parent) {
+	this.parent = parent;
+}
+
 ActionConst.CreateAction = function(_type, _unit, _args) {
 	if (_type == ActionConst.GatherAction) {
 		return new GatherAction(_unit, _args);

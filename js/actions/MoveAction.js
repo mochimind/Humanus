@@ -62,6 +62,36 @@ MoveAction.prototype.resolveAction = function() {
 	}
 }
 
+
+MoveConst.ExpandDetails = function(parent, executeBut, cancelBut) {
+	var unit = UnitConst.selectedUnit;
+	parent.append("<p>Click on the tile you want to move to. Note: it will take 1 turn to move each tile and all your people will not be able " + 
+		"to do anything else</p>");
+	parent.append(cancelBut);
+	cancelBut.on("click", MoveConst.HandleCancelClick);
+	Map.EnableMoveMouseOver(unit.getIconFName(), MoveConst.HandleMoveClick);
+}
+
+MoveConst.HandleCancelClick = function() {
+	Map.DisableMoveMouseOver();
+}
+
+// TODO: handleMove doesn't accept arg unit like other actionpanel handlers - make things consistent please
+MoveConst.HandleMoveClick = function(tile) {
+	var tCoords = Map.GetTileCoords(tile);
+	var unit = UnitConst.selectedUnit;
+	if (tCoords[0] == unit.x && tCoords == unit.y) {
+		// user clicked on their current location, but let's continue to allow them to navigate
+		alert("you're already there!");
+		Map.EnableMoveMouseOver(unit.getIconFName(), ActionPanel.HandleMove);
+		return;
+	}
+
+	new MoveAction(unit, tCoords);
+	ActionPanel.UnloadDetails();
+	ActionPanel.UpdateCurrentActions(unit);
+}
+
 MoveConst.RemoveMoveAction = function(unit) {
 	for (var i=0 ; i<unit.actions.length ; i++) {
 		if (unit.actions[i].type == ActionConst.MoveAction) {

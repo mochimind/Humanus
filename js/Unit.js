@@ -91,12 +91,6 @@ Unit.prototype.getAllocatedPop = function(type) {
 	return 0;		
 }
 
-// TODO: this likely is better in its own "Cooking" document so as not to clutter unit code
-Unit.prototype.getMaxCooks = function() {
-	maxNeeded = Math.floor(this.population / 15);
-	return Math.min(maxNeeded, Math.floor(this.food), Math.floor(this.wood)) * 2;		
-}
-
 Unit.prototype.clearTurnSummary = function() {
 	this.turnSummary = {
 		'harvested': {}, 
@@ -149,6 +143,38 @@ Unit.prototype.processTurn = function() {
 	if (Math.floor(oldPopulation) != Math.floor(this.population)) {
 		summary.population = Math.floor(this.population) - Math.floor(oldPopulation);
 	}
+}
+
+Unit.prototype.validateWorkers = function(workers, action, maxPossible) {
+	var curWorkers = this.getAllocatedPop(action);
+	if (isNaN(workers)) {
+		alert("please input a valid number");
+		return false;
+	}
+
+	if (workers < 0) {
+		alert ("please input a positive number");
+		return false;
+	}
+
+	if (action != ActionConst.MoveAction && workers-curWorkers > this.getAvailablePop()) {
+		alert ("not enough population to allocate!");
+		return false;
+	}
+
+	if (maxPossible != null && workers > maxPossible) {
+		alert("can't have that many workers here!");
+		return false;
+	}
+
+	return true;
+}
+
+Unit.prototype.commitWorkers = function(_workers, action) {
+	// make sure we get rid of decimals
+	workers = Math.floor(_workers);
+
+	this.allocatePop(workers, action);
 }
 
 
