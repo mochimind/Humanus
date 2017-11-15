@@ -15,6 +15,7 @@ UnitPanel.UpdateResources = function(bundle) {
 	for (var tok in bundle.resources) {
 		var resource = bundle.resources[tok];
 
+		console.log(resource.id);
 		if (ItemList[resource.id].icon == null) {
 			// we are assuming if there's no icon, we don't want to display the resource - this may not be true in the future
 			continue;

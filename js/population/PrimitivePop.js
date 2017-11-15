@@ -12,10 +12,10 @@ PrimitivePop.prototype.consumeResources = function(resource) {
 	hungryPeople = this.population.getTotalPop();
 
 	// try to feed them with meals first
-	hungryPeople -= resource.consume(ResourceConst.mealsType, hungryPeople);
+	hungryPeople -= resource.consume(ItemList.Meals.id, hungryPeople);
 	if (hungryPeople > 0) {
 		// try to feed them with food
-		hungryPeople -= resource.consume(ResourceConst.foodType, hungryPeople / 10) * 10;
+		hungryPeople -= resource.consume(ItemList.Food.id, hungryPeople / 10) * 10;
 	}
 
 	// there wasn't enough food to feed everyone, they need to be downgraded

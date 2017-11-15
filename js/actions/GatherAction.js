@@ -9,8 +9,8 @@ GatherAction.prototype.constructor = GatherAction;
 
 GatherAction.prototype.resolveAction = function() {
 	harvest = this.args/10;
-	this.unit.resources.produce(ResourceConst.foodType, harvest);
-	this.unit.resources.produce(ResourceConst.woodType, harvest);
+	this.unit.resources.produce(ItemList.Food.id, harvest);
+	this.unit.resources.produce(ItemList.Wood.id, harvest);
 }
 
 GatherAction.prototype.removeAction = function() {

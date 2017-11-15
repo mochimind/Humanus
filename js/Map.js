@@ -19,7 +19,7 @@ Map.GenerateMap = function() {
 				Map.curY = j;
 
 				var res = new ResourceBundle();
-				res.produce(ResourceConst.foodType, 100);
+				res.produce(ItemList.Food.id, 100);
 
 				var newUnit = new MobileUnit(res);
 				newUnit.population.addPopulation(DemographicConst.PrimitiveType, 20);

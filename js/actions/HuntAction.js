@@ -22,16 +22,16 @@ HuntAction.prototype.resolveAction = function() {
 			animalAmount--;
 			animalTypeScore = Math.random();
 			if (animalTypeScore >= HuntConst.BigGameThreshold) {
-				this.unit.resources.produce(ResourceConst.foodType,10);
-				this.unit.resources.produce(ResourceConst.hidesType, 10);
+				this.unit.resources.produce(ItemList.Food.id,10);
+				this.unit.resources.produce(ItemList.Hides.id, 10);
 				tile.updateAnimals(-100);
 			} else if (animalTypeScore >= HuntConst.MediumGameThreshold) {
-				this.unit.resources.produce(ResourceConst.foodType,3);
-				this.unit.resources.produce(ResourceConst.hidesType, 3);
+				this.unit.resources.produce(ItemList.Food.id,3);
+				this.unit.resources.produce(ItemList.Hides.id, 3);
 				tile.updateAnimals(-50);
 			} else {
-				this.unit.resources.produce(ResourceConst.foodType,1);
-				this.unit.resources.produce(ResourceConst.hidesType, 1);
+				this.unit.resources.produce(ItemList.Food.id,1);
+				this.unit.resources.produce(ItemList.Hides.id, 1);
 			}
 			if (animalAmount <= 0) {
 				return;

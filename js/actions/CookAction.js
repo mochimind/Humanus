@@ -9,9 +9,9 @@ CookAction.prototype.constructor = CookAction;
 
 CookAction.prototype.resolveAction = function() {
 	harvest = this.args / 2
-	this.unit.resources.produce(ResourceConst.mealsType, harvest * 15);
-	this.unit.resources.consume(ResourceConst.foodType, harvest);
-	this.unit.resources.consume(ResourceConst.woodType, harvest);
+	this.unit.resources.produce(ItemList.Meals.id, harvest * 15);
+	this.unit.resources.consume(ItemList.Food.id, harvest);
+	this.unit.resources.consume(ItemList.Wood.id, harvest);
 
 	// next turn we may not be able to have the same number of cooks due to resource constraints
 	// assign the max possible
@@ -66,7 +66,7 @@ CookConst.HandleSubmit = function() {
 // TODO: this likely is better in its own "Cooking" document so as not to clutter unit code
 CookConst.GetMaxCooks = function(unit) {
 	var maxNeeded = Math.floor(unit.population.getTotalPop() / 15);
-	return Math.min(maxNeeded, Math.floor(unit.resources.getAvailable(ResourceConst.foodType))*2, 
-		Math.floor(unit.resources.getAvailable(ResourceConst.woodType))) * 2;		
+	return Math.min(maxNeeded, Math.floor(unit.resources.getAvailable(ItemList.Food.id))*2, 
+		Math.floor(unit.resources.getAvailable(ItemList.Wood.id))) * 2;		
 }
 

@@ -95,7 +95,7 @@ CraftConst.CreateRequirementsTable = function(resources) {
 		var newRow = $("<tr></tr>");
 		for (var i=0 ; i<resources.length ; i++) {
 			var iconCol = $("<td class='resourceIcon'></td>");
-			var resIcon = ResourceConst.GetIcon(resources[i].type);
+			var resIcon = ItemList[resources[i].id].icon;
 			iconCol.append("<img src=" + resIcon + ">");
 			newRow.append(iconCol);
 

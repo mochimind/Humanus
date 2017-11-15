@@ -1,10 +1,5 @@
 var ResourceConst = {};
 
-ResourceConst.mealsType = "Meal";
-ResourceConst.foodType = "Food";
-ResourceConst.woodType = "Wood";
-ResourceConst.hidesType = "Hides";
-
 function ResourceBundle() {
 	this.resources = {};
 	this.summary = [];
@@ -117,14 +112,4 @@ ResourceBundle.prototype.newTurn = function() {
 	}
 }
 
-ResourceConst.GetIcon = function(type) {
- if (type == ResourceConst.foodType) {
-		return "img/food.png";
-	} else if (type == ResourceConst.woodType) {
-		return "img/wood.png";
-	} else if (type == ResourceConst.hidesType) {
-		return "img/hides.png";
-	}
 
-	return "";
-}
