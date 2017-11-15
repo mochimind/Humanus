@@ -42,7 +42,7 @@ ResourceBundle.prototype.produce = function(type, amount) {
 	if (this.resources[type] != null) {
 		this.resources[type].produce(amount);
 	} else {
-		this.resources[type] = ResourceConst.CreateResource(type, amount);
+		this.resources[type] = new Resource(type, amount);
 	}
 }
 
@@ -102,9 +102,7 @@ ResourceBundle.prototype.getTurnSummary = function() {
 }
 
 ResourceBundle.prototype.loadInfo = function(){
-	for (const tok in this.resources) {
-		this.resources[tok].loadInfo();
-	}
+
 }
 
 ResourceBundle.prototype.processTurn = function() {
@@ -117,21 +115,6 @@ ResourceBundle.prototype.newTurn = function() {
 	for (const tok in this.resources) {
 		this.resources[tok].newTurn();
 	}
-}
-
-ResourceConst.CreateResource = function(type, amount) {
-	if (type == ResourceConst.mealsType) {
-		return new MealsResource(amount);
-	} else if (type == ResourceConst.foodType) {
-		return new FoodResource(amount);
-	} else if (type == ResourceConst.woodType) {
-		return new WoodResource(amount);
-	} else if (type == ResourceConst.hidesType) {
-		return new HidesResource(amount);
-	}
-
-	console.log("error: undefined resource type: " + type);
-	return null;
 }
 
 ResourceConst.GetIcon = function(type) {

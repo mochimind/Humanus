@@ -28,6 +28,7 @@
 		<script src="js/items/ItemList.js"></script>
 
 		<script src="js/ActionPanel.js"></script>
+		<script src="js/UnitPanel.js"></script>
 		<script src="js/Map.js"></script>
 
 		<script src="js/Util.js"></script>
@@ -62,12 +63,7 @@
 						<div id="unitSummary" class="rightPanel dataPanel">
 							Type: <span id='unit'></span><br>
 							Population: <span id='population'></span><br>
-							<table width="100%">
-								<tr>
-									<td class="resourceCell"><img src="img/food.png" class="resourceIcon"><span id="foodAmount" class="resourceAmount"></span></td>
-									<td class="resourceCell"><img src="img/wood.png" class="resourceIcon"><span id="woodAmount" class="resourceAmount"></span></td>
-									<td class="resourceCell"><img src="img/hides.png" class="resourceIcon"><span id="hidesAmount" class="resourceAmount"></span></td>
-								</tr>
+							<table class="rightPanel" id="unitResources">
 							</table>
 						</div>
 						<div class="banner rightPanel">Actions: </div>

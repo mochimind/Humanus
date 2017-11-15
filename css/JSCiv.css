@@ -68,15 +68,6 @@
 	width: 33%
 }
 
-.resourceIcon {
-	width: 20px;
-	height: 20px;
-}
-
-.resourceAmount {
-	margin-left: 4px;
-}
-
 #currentActionsHeader {
 	border-bottom-width: 2px;
 	border-bottom-color: blue;
@@ -95,7 +86,12 @@
 	height: 20px;
 }
 
-.resourceAmount {
+.resourceAmountShort {
 	width: 40px;
+	height: 20px;
+}
+
+.resourceAmountLong {
+	width: 70px;
 	height: 20px;
 }

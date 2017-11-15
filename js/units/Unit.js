@@ -19,6 +19,9 @@ Unit.prototype.selectUnit = function() {
 	UnitConst.selectedUnit = this;
 	ActionPanel.LoadUnit(this);
 	this.loadInfo();
+	UnitPanel.UpdatePopulation(Math.floor(this.population.getTotalPop()));
+	UnitPanel.UpdateResources(this.resources);
+
 }
 
 Unit.prototype.getIconFName = function() {

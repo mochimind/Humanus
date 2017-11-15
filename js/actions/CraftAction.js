@@ -11,14 +11,14 @@ CraftAction.prototype.constructor = CraftAction;
 
 CraftAction.prototype.resolveAction = function() {
 	var item = ItemList[this.item];
-	var craftAmount = args / item.work;
+	var craftAmount = this.args / item.work;
 	if (item.components.length != 0){
 		for (var i=0 ; i<item.components.length ; i++) {
 			craftAmount = Math.min(craftAmount, this.unit.resources.isAvailable(item.components[i].type, 
 				item.components[i].amount * craftAmount) / item.components[i].amount);
 		}
 	}
-	this.unit.resources.produce(item, canCraft);
+	this.unit.resources.produce(item.id, craftAmount);
 	if (item.components.length != 0) {
 		for (var i=0 ; i<item.components.length ; i++) {
 			this.unit.resources.consume(item.components[i].amount * craftAmount);
@@ -99,7 +99,7 @@ CraftConst.CreateRequirementsTable = function(resources) {
 			iconCol.append("<img src=" + resIcon + ">");
 			newRow.append(iconCol);
 
-			var numCol = $("<td class='resourceAmount'></td>");
+			var numCol = $("<td class='resourceAmountShort'></td>");
 			numCol.text = resources[i].amount;
 			newRow.append(numCol);
 		}
@@ -111,35 +111,39 @@ CraftConst.CreateRequirementsTable = function(resources) {
 }
 
 CraftConst.HandleSubmit = function() {
-	var canCraft = unit.getPossibleCrafts();
 	var unit = UnitConst.selectedUnit;
+	var canCraft = unit.getPossibleCrafts();
 	var valid = true;
+	// allocation lis is the list of steps we need to undo in an error. completedList is the list of actions we create on success
 	var allocationList = [];
+	var completedList = [];
 
 	// we will iterate through each craft item from the top of the list and try to allocate crafters to create the item
 	for (var i=0 ; i<canCraft.length ; i++) {
 		var item = ItemList[canCraft[i]];
 		var workers = $("#ci_" + item.id).val();
-		var allocatable = unit.population.validateCrafters(workers, item.id);
+		var allocatable = Math.min(unit.population.getAvailablePop(ActionConst.CraftAction, item.id), workers);
 		if (workers != allocatable) {
-			$("#ci_" + item.id).val(allocatable);
-			alert("Can't allocate enough workers for " + item.name);
+			alert("Can't allocate enough workers for " + item.name + ", could only get " + allocatable);
 			for (var j=0 ; j<allocationList.length ; j++) {
-
+				unit.population.unallocatePop(allocationList[i][0], ActionConst.CraftAction, allocationList[i][1]);
 			}
 			return;
 		} else {
 			// we want to store how many additional people we allocated. this way if there's a problem, we can still
 			// restore what the user had allocated last turn
-			allocationList.push([workers - unit.population.getAllocatedPop(CraftConst.GenerateTypeKey(canCraft[i])), item.id]);
-			unit.population.allocatePop(workers, CraftConst.GenerateTypeKey(item.id));
+			allocationList.push([workers - unit.population.getAllocatedPop(ActionConst.CraftAction, item.id) , item.id]);
+			unit.population.allocatePop(workers, ActionConst.CraftAction, item.id);
+			completedList.push([item.id, workers]);
 		}
 	}
 
-}
-
-CraftConst.GenerateTypeKey = function(item) {
-	return ActionConst.CraftAction + this.item;
+	// first make sure there are no movements going on - we can't have workers and movement
+	MoveConst.RemoveMoveAction(unit);
+	for (var i=0 ; i<completedList.length ; i++) {
+		new CraftAction(unit, completedList[i][0], completedList[i][1]);
+	}
+	ActionPanel.HandleSubmit();
 }
 
 CraftConst.MeetsCriteria = function(demographic, item) {
