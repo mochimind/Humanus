@@ -9,6 +9,17 @@ function CraftAction(_unit, item, _args) {
 CraftAction.prototype = Object.create(Action.prototype);
 CraftAction.prototype.constructor = CraftAction;
 
+CraftAction.prototype.addOrReplaceAction = function() {
+	for (var i=0 ; i<this.unit.actions.length ; i++) {
+		var iter = this.unit.actions[i];
+		if (iter.getType() == this.getType() && iter.item == this.item) {
+			iter.args = this.args;
+			return;
+		}
+	}
+	this.unit.actions.push(this);
+}
+
 CraftAction.prototype.resolveAction = function() {
 	var item = ItemList[this.item];
 	var craftAmount = this.args / item.work;

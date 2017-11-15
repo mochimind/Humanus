@@ -59,7 +59,7 @@ CookConst.HandleSubmit = function() {
 	MoveConst.RemoveMoveAction(unit);
 
 	unit.population.allocatePop(workers, ActionConst.CookAction);
-	ActionConst.CreateAction(ActionConst.CookAction, unit, workers);
+	new CookAction(unit, workers);
 	ActionPanel.HandleSubmit();
 }
 

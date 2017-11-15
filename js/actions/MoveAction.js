@@ -40,7 +40,6 @@ MoveAction.prototype = Object.create(Action.prototype);
 MoveAction.prototype.constructor = MoveAction;
 
 MoveAction.prototype.removeAction = function() {
-	console.log("removing action");
 	// remove all the footprints
 	for (var i=0 ; i<this.args.length ; i++) {
 		var coord = this.args[i];
