@@ -93,42 +93,51 @@ Population.prototype.clearAllocatedPop = function() {
 
 // returns the number of people available to do the specific task
 // note, people that are currently performing the action should be considered as available to do it
-Population.prototype.getAvailablePop = function(action) {
+Population.prototype.getAvailablePop = function(action, category) {
 	availablePop = 0;
 	for (var i=0 ; i<this.data.length ; i++) {
-		availablePop += this.data[i].getAvailablePop(action) + this.data[i].getAllocatedPop(action);
+		availablePop += this.data[i].getAvailablePop(action, category) + this.data[i].getAllocatedPop(action, category);
 	}
 
 	return Math.floor(availablePop);
 }
 
-Population.prototype.getAllocatedPop = function(type) {
+Population.prototype.getAllocatedPop = function(action, category) {
 	var allocatedPop = 0;
 	for (var i=0 ; i<this.data.length ; i++) {
-		allocatedPop += this.data[i].getAllocatedPop(type);
+		allocatedPop += this.data[i].getAllocatedPop(action, category);
 	}
 
-	return Math.floor(allocatedPop)
+	return allocatedPop;
 }
 
-Population.prototype.allocatePop = function(workers, action) {
-	toAllocate = Math.floor(workers);
+Population.prototype.allocatePop = function(workers, action, category) {
+	var toAllocate = Math.floor(workers);
 	for (var i=0 ; i<this.data.length ; i++) {
-		toAllocate -= this.data[i].allocatePop(workers, action);
+		toAllocate -= this.data[i].allocatePop(toAllocate, action, category);
 		if (toAllocate == 0) {
 			return;
 		}
 	}
 }
 
-Population.prototype.unallocatePop = function(action) {
+Population.prototype.unallocatePop = function(workers, action, category) {
+	var toAllocate = Math.floor(workers);
 	for (var i=0 ; i<this.data.length ; i++) {
-		this.data[i].removeAllocation(action);
+		toAllocate -= this.data[i].unallocatePop(toAllocate, action, category);
+		if (toAllocate == 0) {
+			return;
+		}
 	}
 }
 
-Population.prototype.validateWorkers = function(workers, action) {
-	curWorkers = this.getAllocatedPop(action);
+Population.prototype.removeAllocation = function(action, category) {
+	for (var i=0 ; i<this.data.length ; i++) {
+		this.data[i].removeAllocation(action, category);
+	}
+}
+
+Population.prototype.validateWorkers = function(workers, action, criteria) {
 	if (isNaN(workers)) {
 		alert("please input a valid number");
 		return false;
@@ -139,7 +148,7 @@ Population.prototype.validateWorkers = function(workers, action) {
 		return false;
 	}
 
-	if (action != ActionConst.MoveAction && workers > this.getAvailablePop(action)) {
+	if (action != ActionConst.MoveAction && workers > this.getAvailablePop(action), criteria) {
 		alert ("not enough free eligible workers to allocate!");
 		return false;
 	}
@@ -147,23 +156,3 @@ Population.prototype.validateWorkers = function(workers, action) {
 	return true;
 
 }
-
-// returns -1 if there is a problem, otherwise, the number of workers that were allocated
-Population.prototype.validateCrafters = function(workers, item) {
-	if (!this.validateWorkers(workers, ActionConst.CraftAction)) {
-		return -1;
-	}
-
-	// now check if there are enough people with the right skill to craft this item
-	return Math.min(this.getMaxCrafters(item), workers);
-}
-
-Population.prototype.getMaxCrafters = function(item) {
-	var outVal = 0;
-	for (var i=0 ; i<this.data.length ; i++) {
-		outVal += this.data[i].getMaxCrafters(item);
-	}
-
-	return outVal;
-}
-

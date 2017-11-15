@@ -28,7 +28,7 @@ CraftAction.prototype.resolveAction = function() {
 
 CraftAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
-	this.unit.population.unallocatePop(this.item);
+	this.unit.population.removeAllocation(this.item);
 }
 
 // TODO: not sure if this is the best way to do it, but the type of a craft action is a merge between
@@ -56,8 +56,8 @@ CraftConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 
 	for (var i=0 ; i<canCraft.length ; i++) {
 		var item = ItemList[canCraft[i]];
-		var curCrafters = unit.population.getAllocatedPop(CraftConst.GenerateTypeKey(canCraft[i]));
-		var maxCrafters = unit.population.getMaxCrafters(canCraft[i]);
+		var curCrafters = unit.population.getAllocatedPop(ActionConst.CraftAction, item.id);
+		var maxCrafters = unit.population.getAvailablePop(ActionConst.CraftAction, item.id);
 
 		var containerRow = $("<tr></tr>");
 		var newCell = $("<td></td>");
@@ -113,16 +113,41 @@ CraftConst.CreateRequirementsTable = function(resources) {
 CraftConst.HandleSubmit = function() {
 	var canCraft = unit.getPossibleCrafts();
 	var unit = UnitConst.selectedUnit;
+	var valid = true;
+	var allocationList = [];
 
 	// we will iterate through each craft item from the top of the list and try to allocate crafters to create the item
 	for (var i=0 ; i<canCraft.length ; i++) {
 		var item = ItemList[canCraft[i]];
 		var workers = $("#ci_" + item.id).val();
+		var allocatable = unit.population.validateCrafters(workers, item.id);
+		if (workers != allocatable) {
+			$("#ci_" + item.id).val(allocatable);
+			alert("Can't allocate enough workers for " + item.name);
+			for (var j=0 ; j<allocationList.length ; j++) {
+
+			}
+			return;
+		} else {
+			// we want to store how many additional people we allocated. this way if there's a problem, we can still
+			// restore what the user had allocated last turn
+			allocationList.push([workers - unit.population.getAllocatedPop(CraftConst.GenerateTypeKey(canCraft[i])), item.id]);
+			unit.population.allocatePop(workers, CraftConst.GenerateTypeKey(item.id));
+		}
 	}
+
 }
 
 CraftConst.GenerateTypeKey = function(item) {
 	return ActionConst.CraftAction + this.item;
+}
+
+CraftConst.MeetsCriteria = function(demographic, item) {
+	if (demographic.canCraft().includes(item)) {
+		return true;
+	}
+
+	return false;
 }
 
 

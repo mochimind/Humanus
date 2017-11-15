@@ -91,3 +91,9 @@ ActionConst.ProcessActions = function(unit) {
 		action.resolveAction();
 	}
 }
+
+ActionConst.MeetsCriteria = function(demographic, action, criteria) {
+	if (action == ActionConst.CraftAction) {
+		return CraftConst.MeetsCriteria(demographic, criteria);
+	}
+}

@@ -20,7 +20,7 @@ CookAction.prototype.resolveAction = function() {
 
 CookAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
-	this.unit.population.unallocatePop(this.type);
+	this.unit.population.removeAllocation(this.type);
 }
 
 CookAction.prototype.getType = function() {
@@ -33,11 +33,12 @@ CookConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	var unit = UnitConst.selectedUnit;
 	var tile = unit.getTile();
 
-	cooks = unit.population.getAllocatedPop(ActionConst.CookAction);
+	var cooks = unit.population.getAllocatedPop(ActionConst.CookAction);
 	parent.append("<p>" + "You have " + cooks + " people cooking<br>You have " + CookConst.GetMaxCooks(unit) + " people who can cook</p>");
 	parent.append("<p>" + "How many would you like to cook?</p>");
 	parent.append("<textarea id='cookInput' rows='1' cols='10' class='workerInput'>" + cooks + "</textarea>");
 	parent.append("<span> / max: " + CookConst.GetMaxCooks(unit) + " given conditions</span>");
+	parent.append("<br>");
 	parent.append(executeBut);
 	parent.append(cancelBut);
 	parent.append("<p>Cooking allows you to process food into more nutritious meals. 1 Food is processed into 15 meals, which can feed" + 
@@ -64,7 +65,7 @@ CookConst.HandleSubmit = function() {
 
 // TODO: this likely is better in its own "Cooking" document so as not to clutter unit code
 CookConst.GetMaxCooks = function(unit) {
-	maxNeeded = Math.floor(unit.population.getTotalPop() / 15);
+	var maxNeeded = Math.floor(unit.population.getTotalPop() / 15);
 	return Math.min(maxNeeded, Math.floor(unit.resources.getAvailable(ResourceConst.foodType))*2, 
 		Math.floor(unit.resources.getAvailable(ResourceConst.woodType))) * 2;		
 }

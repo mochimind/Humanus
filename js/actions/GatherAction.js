@@ -15,7 +15,7 @@ GatherAction.prototype.resolveAction = function() {
 
 GatherAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
-	this.unit.population.unallocatePop(this.type);
+	this.unit.population.removeAllocation(this.type);
 }
 
 GatherAction.prototype.getType = function() {
@@ -41,6 +41,7 @@ GatherConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	// note, we need to add the current gatherers to the allocatable to get the actual allocatable
 	effectiveMaxGatherers = Math.min(maxGatherers, unit.population.getAvailablePop(ActionConst.GatherAction));
 	parent.append("<span> / max: " + effectiveMaxGatherers + " given conditions</span>");
+	parent.append("<br>");
 	parent.append(executeBut);
 	parent.append(cancelBut);
 	parent.append("<p>Gathering yields a small amount of food and wood (1 of each per 10 people working)." + 

@@ -43,7 +43,7 @@ HuntAction.prototype.resolveAction = function() {
 // TODO: change type to be a function, rather than an argument
 HuntAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
-	this.unit.population.unallocatePop(this.type);
+	this.unit.population.removeAllocation(this.type);
 }
 
 HuntAction.prototype.getType = function() {
