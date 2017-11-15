@@ -147,7 +147,9 @@ CraftConst.HandleSubmit = function() {
 			// restore what the user had allocated last turn
 			allocationList.push([item.id, workers - unit.population.getAllocatedPop(ActionConst.CraftAction, item.id)]);
 			unit.population.allocatePop(workers, ActionConst.CraftAction, item.id);
-			completedList.push([item.id, workers]);
+			if (workers != 0) {
+				completedList.push([item.id, workers]);
+			}
 		}
 	}
 
