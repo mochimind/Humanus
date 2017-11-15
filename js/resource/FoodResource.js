@@ -13,3 +13,4 @@ FoodResource.prototype.getType = function() {
 FoodResource.prototype.loadInfo = function() {
 	$("#foodAmount").text(Math.floor(this.amount));
 }
+

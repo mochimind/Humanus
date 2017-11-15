@@ -1,7 +1,7 @@
 var CookConst = {};
 
 function CookAction(_unit, _args) {
-	Action.call(this, ActionConst.CookAction, _unit, _args);
+	Action.call(this, _unit, _args);
 }
 
 CookAction.prototype = Object.create(Action.prototype);
@@ -17,6 +17,17 @@ CookAction.prototype.resolveAction = function() {
 	// assign the max possible
 	this.args = Math.min(this.args, CookConst.GetMaxCooks(this.unit));
 }
+
+CookAction.prototype.removeAction = function() {
+	Action.prototype.removeAction.call(this);
+	this.unit.population.unallocatePop(this.type);
+}
+
+CookAction.prototype.getType = function() {
+	return ActionConst.CookAction;
+}
+
+////////////////////////////// static functions
 
 CookConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	var unit = UnitConst.selectedUnit;
@@ -35,13 +46,6 @@ CookConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	executeBut.on("click", CookConst.HandleSubmit);
 	cancelBut.on("click", ActionPanel.HandleCancel);
 }
-
-CookAction.prototype.removeAction = function() {
-	Action.prototype.removeAction.call(this);
-	this.unit.population.unallocatePop(this.type);
-}
-
-////////////////////////////// static functions
 
 CookConst.HandleSubmit = function() {
 	var unit = UnitConst.selectedUnit;

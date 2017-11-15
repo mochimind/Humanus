@@ -104,6 +104,31 @@ Unit.prototype.getPossibleActions = function() {
 	return actionList;
 }
 
+Unit.prototype.canCraft = function() {
+	return [];
+}
+
+Unit.prototype.getPossibleCrafts = function() {
+	var canCraftList = [];
+	for (var i=0 ; i<this.population.data.length ; i++) {
+		var processItems = this.population.data[i].canCraft();
+		for (var j=0 ; j<processItems.length ; j++) {
+			if (!canCraftList.includes(processItems[j])) {
+				canCraftList.push(processItems[j]);
+			}
+		}
+	}
+
+	var processItems = this.canCraft();
+	for (var i=0 ; i<processItems.length ; i++) {
+		if (!canCraftList.includes(processItems[i])) {
+			canCraftList.push(processItems[j]);
+		}
+	}
+
+	return canCraftList;
+}
+
 Unit.prototype.processTurn = function() {
 	this.population.processTurn();
 	this.resources.processTurn();

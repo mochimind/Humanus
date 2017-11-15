@@ -39,6 +39,8 @@ ActionPanel.LoadDetails = function(e) {
 
 	} else if (action == ActionConst.MoveAction) {
 		MoveConst.ExpandDetails($("#actionDetails"), executeBut, cancelBut);
+	} else if (action == ActionConst.CraftAction) {
+		CraftConst.ExpandDetails($("#actionDetails"), executeBut, cancelBut);
 	}
 }
 

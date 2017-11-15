@@ -48,3 +48,11 @@ Demographic.prototype.allocatePop = function(workers, action) {
 
 	return allocateAmount;
 }
+
+Demographic.prototype.getMaxCrafters = function(item) {
+	if (this.canCraft().includes(item)) {
+		return this.getAvailablePop(ActionConst.CraftAction) + this.getAllocatedPop(CraftConst.GenerateTypeKey(item));
+	}
+
+	return 0;
+}

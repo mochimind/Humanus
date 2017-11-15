@@ -12,6 +12,7 @@
 		<script src="js/actions/GatherAction.js"></script>
 		<script src="js/actions/HuntAction.js"></script>
 		<script src="js/actions/MoveAction.js"></script>
+		<script src="js/actions/CraftAction.js"></script>
 
 		<script src="js/population/Demographic.js"></script>
 		<script src="js/population/Population.js"></script>
@@ -23,6 +24,8 @@
 		<script src="js/resource/MealsResource.js"></script>
 		<script src="js/resource/ResourceBundle.js"></script>
 		<script src="js/resource/WoodResource.js"></script>
+
+		<script src="js/items/ItemList.js"></script>
 
 		<script src="js/ActionPanel.js"></script>
 		<script src="js/Map.js"></script>
@@ -41,45 +44,47 @@
 		</script>
 	</head>
 	<body>
-		<table>
-			<tr>
-				<td style="vertical-align:top">
-					<table id='map'>
-					</table>
-				</td>
-				<td style="vertical-align:top" width="300">
-					<div class="banner rightPanel">Tile:</div>
-					<div id="tileSummary" class="rightPanel dataPanel">
-						Explored: <span id='explored'></span><br>
-						Plant life: <span id='plants'></span><br>
-						Animal life: <span id='animals'></span><br>
-					</div>
-					<div class="banner rightPanel">Unit:</div>
-					<div id="unitSummary" class="rightPanel dataPanel">
-						Type: <span id='unit'></span><br>
-						Population: <span id='population'></span><br>
-						<table width="100%">
-							<tr>
-								<td class="resourceCell"><img src="img/food.png" class="resourceIcon"><span id="foodAmount" class="resourceAmount"></span></td>
-								<td class="resourceCell"><img src="img/wood.png" class="resourceIcon"><span id="woodAmount" class="resourceAmount"></span></td>
-								<td class="resourceCell"><img src="img/hides.png" class="resourceIcon"><span id="hidesAmount" class="resourceAmount"></span></td>
-							</tr>
+		<div id="gameContainer">
+			<table>
+				<tr>
+					<td>
+						<table id='map'>
 						</table>
-					</div>
-					<div class="banner rightPanel">Actions: </div>
-					<div id="jobSummary" class="rightPanel dataPanel">
-						<div id='actionPanel'></div>
-						<div id='actionDetails'></div>
-						<div id='currentActions'>
-							<div id='currentActionsHeader'>Current Actions</div>
+					</td>
+					<td style="vertical-align:top" width="400">
+						<div class="banner rightPanel">Tile:</div>
+						<div id="tileSummary" class="rightPanel dataPanel">
+							Explored: <span id='explored'></span><br>
+							Plant life: <span id='plants'></span><br>
+							Animal life: <span id='animals'></span><br>
 						</div>
-					</div>
-					<button id='endTurn'>End Turn</button>
-					<div class="banner rightPanel">Turn Summary: </div>
-					<div id="turnSummary" class="rightPanel dataPanel"></div>
-				</td>
-			</tr>
-		</table>
-		<span id='debug'></span>
+						<div class="banner rightPanel">Unit:</div>
+						<div id="unitSummary" class="rightPanel dataPanel">
+							Type: <span id='unit'></span><br>
+							Population: <span id='population'></span><br>
+							<table width="100%">
+								<tr>
+									<td class="resourceCell"><img src="img/food.png" class="resourceIcon"><span id="foodAmount" class="resourceAmount"></span></td>
+									<td class="resourceCell"><img src="img/wood.png" class="resourceIcon"><span id="woodAmount" class="resourceAmount"></span></td>
+									<td class="resourceCell"><img src="img/hides.png" class="resourceIcon"><span id="hidesAmount" class="resourceAmount"></span></td>
+								</tr>
+							</table>
+						</div>
+						<div class="banner rightPanel">Actions: </div>
+						<div id="jobSummary" class="rightPanel dataPanel">
+							<div id='actionPanel'></div>
+							<div id='actionDetails'></div>
+							<div id='currentActions'>
+								<div id='currentActionsHeader'>Current Actions</div>
+							</div>
+						</div>
+						<button id='endTurn'>End Turn</button>
+						<div class="banner rightPanel">Turn Summary: </div>
+						<div id="turnSummary" class="rightPanel dataPanel"></div>
+					</td>
+				</tr>
+			</table>
+			<span id='debug'></span>
+		</div>
 	</body>
 </html>

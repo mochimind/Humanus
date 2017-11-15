@@ -148,3 +148,22 @@ Population.prototype.validateWorkers = function(workers, action) {
 
 }
 
+// returns -1 if there is a problem, otherwise, the number of workers that were allocated
+Population.prototype.validateCrafters = function(workers, item) {
+	if (!this.validateWorkers(workers, ActionConst.CraftAction)) {
+		return -1;
+	}
+
+	// now check if there are enough people with the right skill to craft this item
+	return Math.min(this.getMaxCrafters(item), workers);
+}
+
+Population.prototype.getMaxCrafters = function(item) {
+	var outVal = 0;
+	for (var i=0 ; i<this.data.length ; i++) {
+		outVal += this.data[i].getMaxCrafters(item);
+	}
+
+	return outVal;
+}
+

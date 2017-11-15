@@ -84,3 +84,18 @@
 	margin-top: 3px;
 	margin-bottom: 2px;
 }
+
+#gameContainer {
+	margin: 0 auto;
+	width: 1200px;
+}
+
+.resourceIcon {
+	width: 20px;
+	height: 20px;
+}
+
+.resourceAmount {
+	width: 40px;
+	height: 20px;
+}

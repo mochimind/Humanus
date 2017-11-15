@@ -18,6 +18,16 @@ ResourceBundle.prototype.getAvailable = function(type) {
 	}
 }
 
+// checks the stores to determine how much of a resource is available
+// returns amount if all is available, or some number between 0 and amount if only a portion is available
+ResourceBundle.prototype.isAvailable = function(type, amount) {
+	if (this.resources[type] != null) {
+		return Math.min(amount, this.resources[type].amount);
+	} else {
+		return 0;
+	}
+}
+
 ResourceBundle.prototype.consume = function(type, amount) {
 	if (this.resources[type] != null) {
 		return this.resources[type].consume(amount);
@@ -122,4 +132,16 @@ ResourceConst.CreateResource = function(type, amount) {
 
 	console.log("error: undefined resource type: " + type);
 	return null;
+}
+
+ResourceConst.GetIcon = function(type) {
+ if (type == ResourceConst.foodType) {
+		return "img/food.png";
+	} else if (type == ResourceConst.woodType) {
+		return "img/wood.png";
+	} else if (type == ResourceConst.hidesType) {
+		return "img/hides.png";
+	}
+
+	return "";
 }

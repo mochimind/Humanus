@@ -4,7 +4,7 @@ HuntConst.BigGameThreshold = 0.85;
 HuntConst.MediumGameThreshold = 0.5;
 
 function HuntAction(_unit, _args) {
-	Action.call(this, ActionConst.HuntAction, _unit, _args);
+	Action.call(this, _unit, _args);
 }
 
 HuntAction.prototype = Object.create(Action.prototype);
@@ -44,6 +44,10 @@ HuntAction.prototype.resolveAction = function() {
 HuntAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
 	this.unit.population.unallocatePop(this.type);
+}
+
+HuntAction.prototype.getType = function() {
+	return ActionConst.HuntAction;
 }
 
 

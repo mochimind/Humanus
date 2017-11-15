@@ -6,7 +6,7 @@ function MoveAction(_unit, _args) {
 	// clear all other actions for this unit - move requires everyone in the tribe
 	ActionConst.ClearActions(_unit);
 
-	Action.call(this, ActionConst.MoveAction, _unit, _args);
+	Action.call(this, _unit, _args);
 
 	// create a path to move to the destination coordinate from the unit's current coordinate
 	// for each stop on the path, create an icon and add the tile to the args list
@@ -63,6 +63,12 @@ MoveAction.prototype.resolveAction = function() {
 	}
 }
 
+MoveAction.prototype.getType = function() {
+	return ActionConst.MoveAction;
+}
+
+
+/////////////////////////////////// static functions
 
 MoveConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	var unit = UnitConst.selectedUnit;

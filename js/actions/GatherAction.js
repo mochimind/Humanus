@@ -1,7 +1,7 @@
 var GatherConst = {};
 
 function GatherAction(_unit, _args) {
-	Action.call(this, ActionConst.GatherAction, _unit, _args);
+	Action.call(this, _unit, _args);
 }
 
 GatherAction.prototype = Object.create(Action.prototype);
@@ -16,6 +16,10 @@ GatherAction.prototype.resolveAction = function() {
 GatherAction.prototype.removeAction = function() {
 	Action.prototype.removeAction.call(this);
 	this.unit.population.unallocatePop(this.type);
+}
+
+GatherAction.prototype.getType = function() {
+	return ActionConst.GatherAction;
 }
 
 

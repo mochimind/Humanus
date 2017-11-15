@@ -7,8 +7,7 @@ ActionConst.EncampAction = "Encamp";
 ActionConst.MoveAction = "Move";
 ActionConst.CraftAction = "Craft";
 
-function Action(_type, _unit, _args) {
-	this.type = _type;
+function Action(_unit, _args) {
 	this.unit = _unit;
 	this.args = _args;
 	if (_unit.actions == null) {
@@ -21,7 +20,7 @@ function Action(_type, _unit, _args) {
 Action.prototype.addOrReplaceAction = function() {
 	for (var i=0 ; i<this.unit.actions.length ; i++) {
 		var iter = this.unit.actions[i];
-		if (iter.type == this.type) {
+		if (iter.type == this.getType()) {
 			iter.args = this.args;
 			return;
 		}
@@ -43,7 +42,11 @@ Action.prototype.removeAction = function() {
 // it's assumed that before the action was added someone has done the checking to make sure it's valid
 // this function is overriden by specific actions that inherit from Action
 Action.prototype.resolveAction = function(){
-	console.log("error: resolve action isn't implemented for type: " + this.type);
+	console.log("error: resolve action isn't implemented for type: " + this.getType());
+}
+
+Action.prototype.getType = function(){
+	console.log("error: action does not have valid type");
 }
 
 Action.prototype.expandDetails = function(parent) {

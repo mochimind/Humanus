@@ -13,3 +13,4 @@ HidesResource.prototype.getType = function() {
 HidesResource.prototype.loadInfo = function() {
 	$("#hidesAmount").text(Math.floor(this.amount));
 }
+

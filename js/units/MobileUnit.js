@@ -15,5 +15,6 @@ MobileUnit.prototype.getType = function() {
 }
 
 MobileUnit.prototype.possibleActions = function() {
-	return [ActionConst.MoveAction, ActionConst.EncampAction];
+	return [ActionConst.MoveAction];
 }
+

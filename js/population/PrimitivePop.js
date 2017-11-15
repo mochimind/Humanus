@@ -41,4 +41,7 @@ PrimitivePop.prototype.getActions = function() {
 	return [ActionConst.GatherAction, ActionConst.HuntAction, ActionConst.CookAction, ActionConst.CraftAction];
 }
 
+PrimitivePop.prototype.canCraft = function() {
+	return[ItemList.BasicTool.id];
+}
 
