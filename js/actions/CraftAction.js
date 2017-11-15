@@ -107,13 +107,14 @@ CraftConst.CreateRequirementsTable = function(resources) {
 		for (var i=0 ; i<resources.length ; i++) {
 			var iconCol = $("<td class='resourceIcon'></td>");
 			var resIcon = ItemList[resources[i].id].icon;
-			iconCol.append("<img src=" + resIcon + ">");
+			iconCol.append("<img src=" + resIcon + " class='resourceIcon'>");
 			newRow.append(iconCol);
 
 			var numCol = $("<td class='resourceAmountShort'></td>");
-			numCol.text = resources[i].amount;
+			numCol.text(resources[i].amount);
 			newRow.append(numCol);
 		}
+		newTable.append(newRow);
 
 		return newTable;		
 	} else {
@@ -136,14 +137,15 @@ CraftConst.HandleSubmit = function() {
 		var allocatable = Math.min(unit.population.getAvailablePop(ActionConst.CraftAction, item.id), workers);
 		if (workers != allocatable) {
 			alert("Can't allocate enough workers for " + item.name + ", could only get " + allocatable);
+			console.log(allocationList);
 			for (var j=0 ; j<allocationList.length ; j++) {
-				unit.population.unallocatePop(allocationList[i][0], ActionConst.CraftAction, allocationList[i][1]);
+				unit.population.unallocatePop(allocationList[j][1], ActionConst.CraftAction, allocationList[j][0]);
 			}
 			return;
 		} else {
 			// we want to store how many additional people we allocated. this way if there's a problem, we can still
 			// restore what the user had allocated last turn
-			allocationList.push([workers - unit.population.getAllocatedPop(ActionConst.CraftAction, item.id) , item.id]);
+			allocationList.push([item.id, workers - unit.population.getAllocatedPop(ActionConst.CraftAction, item.id)]);
 			unit.population.allocatePop(workers, ActionConst.CraftAction, item.id);
 			completedList.push([item.id, workers]);
 		}

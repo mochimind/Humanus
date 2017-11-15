@@ -42,6 +42,6 @@ PrimitivePop.prototype.getActions = function() {
 }
 
 PrimitivePop.prototype.canCraft = function() {
-	return[ItemList.BasicTool.id];
+	return[ItemList.BasicTool.id, ItemList.Tent.id];
 }
 

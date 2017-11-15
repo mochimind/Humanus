@@ -26,6 +26,7 @@ Demographic.prototype.getAvailablePop = function(action, category) {
 }
 
 Demographic.prototype.getAllocatedPop = function(action, category) {
+	console.log(this.jobs);
 	if (this.jobs[action] != null) {
 		if (category != null) {
 			if (this.jobs[action][category] != null) {
@@ -82,6 +83,7 @@ Demographic.prototype.allocatePop = function(workers, action, category) {
 
 Demographic.prototype.unallocatePop = function(workers, action, category) {
 	var unallocateAmount = Math.min(this.getAllocatedPop(action, category), workers);
+	console.log(unallocateAmount + "," + workers + "," + action + "," + category);
 
 	if (unallocateAmount != 0) {
 		// this means that we've done the checks already that action already exists and if applicable category also exists
@@ -90,7 +92,7 @@ Demographic.prototype.unallocatePop = function(workers, action, category) {
 			// TODO: there can be a situation where we've unallocated the whole population, but the categories are not empty
 		}
 		this.jobs[action].total -= unallocateAmount;
-		this.allocatedCount -= allocateAmount;
+		this.allocatedCount -= unallocateAmount;
 	} else {
 		return 0;
 	}
