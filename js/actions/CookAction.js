@@ -72,7 +72,10 @@ CookConst.HandleSubmit = function() {
 // TODO: this likely is better in its own "Cooking" document so as not to clutter unit code
 CookConst.GetMaxCooks = function(unit) {
 	var maxNeeded = Math.floor(unit.population.getTotalPop() / 15);
-	return Math.floor(Math.min(maxNeeded, unit.resources.getAvailable(ItemList.Food.id, ActionConst.CookAction), 
-		unit.resources.getAvailable(ItemList.Wood.id, ActionConst.cookAction)))*2;
+	return Math.floor(Math.min(
+		maxNeeded, 
+		unit.resources.getAvailable(ItemList.Food.id, ActionConst.CookAction), 
+		unit.resources.getAvailable(ItemList.Wood.id, ActionConst.cookAction),
+		unit.population.getAvailablePop(ActionConst.CookAction) / 2))*2;
 }
 

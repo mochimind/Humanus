@@ -17,7 +17,6 @@ UnitPanel.UpdateResources = function(bundle) {
 
 		if (ItemList[resource.id].icon == null) {
 			// we are assuming if there's no icon, we don't want to display the resource - this may not be true in the future
-			console.log("hit!");
 			continue;
 		}
 		if (rowCount > 0 && rowCount % UnitPanel.ColumnsPerRow == 0) {
@@ -36,9 +35,5 @@ UnitPanel.UpdateResources = function(bundle) {
 		rowCount++;
 	}
 
-	// we don't want to double append. the only time that the above code appends a row is if modulus is 0
-	// however, the row is incremented at the end of the loop so it would come out as '1'
-	if (rowCount % UnitPanel.ColumnsPerRow != 1) {
-		$("#unitResources").append(rowObj);
-	}
+	$("#unitResources").append(rowObj);
 }

@@ -90,7 +90,7 @@ Unit.prototype.possibleActions = function() {
 Unit.prototype.getPossibleActions = function() {
 	var actionList = [];
 	for (var i=0; i<this.population.data.length ; i++) {
-		var processActions = this.population.data[i].getActions();
+		var processActions = this.population.data[i].data.actions;
 		for (const tok in processActions) {
 			if (!actionList.includes(processActions[tok])) {
 				actionList.push(processActions[tok]);
@@ -115,7 +115,7 @@ Unit.prototype.canCraft = function() {
 Unit.prototype.getPossibleCrafts = function() {
 	var canCraftList = [];
 	for (var i=0 ; i<this.population.data.length ; i++) {
-		var processItems = this.population.data[i].canCraft();
+		var processItems = this.population.data[i].data.crafts;
 		for (var j=0 ; j<processItems.length ; j++) {
 			if (!canCraftList.includes(processItems[j])) {
 				canCraftList.push(processItems[j]);

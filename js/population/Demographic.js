@@ -3,14 +3,15 @@ var DemographicConst = {}
 DemographicConst.PrimitiveType = "Primitive";
 DemographicConst.TribalType = "Tribal";
 
-function Demographic(count, population) {
-	this.population = population;
+function Demographic(count, parent, typeObj) {
+	this.parent = parent;
 	this.count = count;
+	this.data = typeObj;
 	this.jobs = {'total': 0};
 }
 
 Demographic.prototype.getAvailablePop = function(action, category) {
-	if (!this.getActions().includes(action)) {
+	if (!this.data.actions.includes(action)) {
 		return 0;
 	}
 	var catName = DemographicConst.GetCategoryUseName(category);
@@ -84,9 +85,28 @@ Demographic.prototype.removeAllocation = function(action, category) {
 	}
 }
 
+Demographic.prototype.consumeResources = function() {
+	var unsatisfied = 0;
+	for(var i=0 ; i<this.data.consumeResources.length ; i++) {
+		var satisfied = 0;
+		var criteria = this.data.consumeResources[i];
+		// note all criterias are an array, this handles the 'or' relationship
+		for (var j=0 ; j<criteria.length ; j++) {
+			satisfied += this.parent.unit.resources.consume(criteria[j].type, criteria[j].amount * (this.count - satisfied)) / criteria[j].amount;
+		}
+		unsatisfied = Math.max(unsatisfied, this.count - satisfied);
+	}
+
+	return unsatisfied;
+}
+
+/////////////////////////////////// static functions
+
 DemographicConst.GetCategoryUseName = function(category) {
 	if (category == null) {
 		return "__none__";
 	}
 	return category;
 }
+
+

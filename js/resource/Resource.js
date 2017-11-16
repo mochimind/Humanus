@@ -9,7 +9,6 @@ function Resource(id, amount) {
 }
 
 Resource.prototype.consume = function(amount) {
-	console.log("consuming: " + this.id + "||" + amount);
 	if (this.amount > amount) {
 		this.amount -= amount;
 		this.consumedThisTurn += amount;

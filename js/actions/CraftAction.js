@@ -10,6 +10,15 @@ CraftAction.prototype = Object.create(Action.prototype);
 CraftAction.prototype.constructor = CraftAction;
 
 CraftAction.prototype.addOrReplaceAction = function() {
+	if (this.args == 0) {
+		for (var i=0 ; i<this.unit.actions.length ; i++) {
+		var iter = this.unit.actions[i];
+		if (iter.getType() == this.getType() && iter.item == this.item) {
+				iter.removeAction();
+			}
+		}
+		return;
+	}
 	for (var i=0 ; i<this.unit.actions.length ; i++) {
 		var iter = this.unit.actions[i];
 		if (iter.getType() == this.getType() && iter.item == this.item) {
@@ -154,9 +163,7 @@ CraftConst.HandleSubmit = function() {
 			// restore what the user had allocated last turn
 			allocationList.push([item.id, workers - unit.population.getAllocatedPop(ActionConst.CraftAction, item.id)]);
 			unit.population.allocatePop(workers, ActionConst.CraftAction, item.id);
-			if (workers != 0) {
-				completedList.push([item.id, workers]);
-			}
+			completedList.push([item.id, workers]);
 		}
 	}
 
@@ -183,7 +190,6 @@ CraftConst.GetMaxProduceable = function(unit, item) {
 		var maxAvailable = 0;
 		for (var i=0 ; i<ItemList[item].components.length ; i++) {
 			var requestItem = ItemList[item].components[i];
-			console.log(requestItem);
 			if (maxAvailable == 0) {
 				maxAvailable = unit.resources.getMaxAvailable(requestItem.id, ActionConst.CraftAction, item) / requestItem.amount;
 			} else {

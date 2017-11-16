@@ -14,21 +14,17 @@ function Population(unit) {
 Population.prototype.addPopulation = function(type, count) {
 	// check if this type of population already exists
 	for (var i=0 ; i<this.data.length ; i++) {
-		if (this.data[i].getType() == type) {
+		if (this.data[i].data.id == type) {
 			this.data[i].count += count;
 			return;
 		}
 	}
 
 	// this type of population doesn't exist, create new
-	if (type == DemographicConst.PrimitiveType) {
-		this.data.push(new PrimitivePop(count, this));
-
-		// we want to make sure that the lowest tech levels are always on the left - they die first :x
-		this.turnSummary.sort(function(a,b) {
-			return a.getTechLevel() - b.getTechLevel();
-		});
-	}
+	this.data.push(new Demographic(count, this, UnitList.HG));
+	this.data.sort(function(a,b) {
+		return a.data.tech - b.data.tech;
+	});
 }
 
 Population.prototype.processTurn = function() {
@@ -39,9 +35,9 @@ Population.prototype.processTurn = function() {
 		var curPop = this.data[i];
 		var downgrades = curPop.consumeResources(this.unit.resources);
 		if (downgrades != 0) {
-			curPop.population -= downgrades;
-			if (curPop.getDowngradeType() != null) {
-				this.addPopulation(curPop.getDowngradeType(), downgrades);
+			curPop.count -= downgrades;
+			if (curPop.data.downgradeType != null) {
+				this.addPopulation(curPop.dat.downgradeType, downgrades);
 				this.addTurnSummary(downgrades + " people didn't get what they need and became " + curPop.getDowngradeType());
 			} else {
 				this.addTurnSummary(downgrades + " people died from starvation");
@@ -56,7 +52,7 @@ Population.prototype.processTurn = function() {
 	if (visibleChange != 0) {
 		this.addTurnSummary("Population changed by " + visibleChange + " due to natural causes");
 	}
-	this.addPopulation(DemographicConst.PrimitiveType, newPeopleCount);
+	this.addPopulation(UnitList.HG.id, newPeopleCount);
 	var reportCount = newPeopleCount.toFixed(1);
 }
 
