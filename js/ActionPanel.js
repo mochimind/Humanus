@@ -58,12 +58,16 @@ ActionPanel.UpdateCurrentActions = function(unit) {
 	$("#currentActions").append("<div id='currentActionsHeader'>Current Actions</div>");
 	var actions = ActionConst.GetActions(unit);
 	for (var i=0 ; i<actions.length ; i++) {
-		if (actions[i].getType() != ActionConst.MoveAction) {
+		if (actions[i].getType() == ActionConst.MoveAction) {
+			$("#currentActions").append("<div>" + actions[i].getType() + ": " + actions[i].args.length + " tiles</div>");
+		} else if (actions[i].getType() == ActionConst.CraftAction) {
 			if (actions[i].args != 0) {
-				$("#currentActions").append("<div>" + actions[i].getType() + ": " + actions[i].args + "</div>");				
+				$("#currentActions").append("<div>" + actions[i].getType() + " - " + ItemList[actions[i].item].name + ": " + actions[i].args + " ppl</div>");
 			}
 		} else {
-			$("#currentActions").append("<div>" + actions[i].getType() + ": " + actions[i].args.length + " tiles</div>");
+			if (actions[i].args != 0) {
+				$("#currentActions").append("<div>" + actions[i].getType() + ": " + actions[i].args + " ppl</div>");				
+			}
 		}
 	}
 }
