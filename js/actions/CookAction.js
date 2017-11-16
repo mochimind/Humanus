@@ -18,6 +18,10 @@ CookAction.prototype.newTurn = function() {
 	// check if there's enough resources for the number of cooks we want
 	// assign the max possible
 	this.args = Math.min(this.args, CookConst.GetMaxCooks(this.unit));
+
+	this.unit.resources.claim(ItemList.Food.id, this.args / 2, ActionConst.CookAction);
+	this.unit.resources.claim(ItemList.Wood.id, this.args / 2, ActionConst.CookAction);	
+	this.unit.population.allocatePop(this.args, ActionConst.CookAction);
 }
 
 CookAction.prototype.removeAction = function() {
@@ -68,7 +72,7 @@ CookConst.HandleSubmit = function() {
 // TODO: this likely is better in its own "Cooking" document so as not to clutter unit code
 CookConst.GetMaxCooks = function(unit) {
 	var maxNeeded = Math.floor(unit.population.getTotalPop() / 15);
-	return Math.min(maxNeeded, Math.floor(unit.resources.getAvailable(ItemList.Food.id))*2, 
-		Math.floor(unit.resources.getAvailable(ItemList.Wood.id))) * 2;		
+	return Math.floor(Math.min(maxNeeded, unit.resources.getAvailable(ItemList.Food.id, ActionConst.CookAction), 
+		unit.resources.getAvailable(ItemList.Wood.id, ActionConst.cookAction)))*2;
 }
 

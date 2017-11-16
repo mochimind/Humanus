@@ -62,6 +62,7 @@ Unit.prototype.newTurn = function() {
 	this.moved = false;
 	this.population.newTurn();
 	this.resources.newTurn();
+	ActionConst.NewTurn(this);
 }
 
 Unit.prototype.getTurnSummary = function() {

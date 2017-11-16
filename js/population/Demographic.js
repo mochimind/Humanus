@@ -6,94 +6,87 @@ DemographicConst.TribalType = "Tribal";
 function Demographic(count, population) {
 	this.population = population;
 	this.count = count;
-	this.allocatedCount = 0;
-	this.jobs = {};
+	this.jobs = {'total': 0};
 }
 
 Demographic.prototype.getAvailablePop = function(action, category) {
-	if (this.getActions().includes(action)) {
-		if (category != null) {
-			if (ActionConst.MeetsCriteria(this, action, category)) {
-				return this.count - this.allocatedCount;
-			} else {
-				return 0;
-			}
-		} else {
-			return this.count - this.allocatedCount;
-		}
+	if (!this.getActions().includes(action)) {
+		return 0;
 	}
-	return 0;
+	var catName = DemographicConst.GetCategoryUseName(category);
+
+	var allocated = 0;
+	if (this.jobs.hasOwnProperty(action) && this.jobs[action].hasOwnProperty(catName)) {
+		allocated = this.jobs[action][catName];
+	}
+
+	return this.count - this.jobs.total + allocated;
 }
 
 Demographic.prototype.getAllocatedPop = function(action, category) {
-	console.log(this.jobs);
-	if (this.jobs[action] != null) {
-		if (category != null) {
-			if (this.jobs[action][category] != null) {
-				return this.jobs[action][category];
-			}
-		} else {
-			return this.jobs[action].total;
-		}
+	var catName = DemographicConst.GetCategoryUseName(category);
+
+	if (this.jobs.hasOwnProperty(action) && this.jobs[action].hasOwnProperty(catName)) {
+		return this.jobs[action][catName];
 	}
+
 	return 0;
 }
 
 Demographic.prototype.clearAllocatedPop = function() {
 	for (const tok in Object.keys(this.jobs)) {
-		this.allocatedCount += this.jobs[tok].total;
+		this.jobs[tok].total += this.jobs[tok];
 		delete this.jobs[tok];
-	}
-}
-
-Demographic.prototype.removeAllocation = function(action, category) {
-	if (this.jobs[action] != null) {
-		if (category != null) {
-			// remove just the category
-			if (this.jobs[action][category] != null) {
-				var removeAmount = this.jobs[action][category];
-				this.jobs[action].total -= removeAmount;
-				this.allocatedCount -= removeAmount;
-				delete this.jobs[action][category];
-			}
-		} else {
-			// remove everything
-			this.allocatedCount -= this.jobs[action].total;
-			delete this.jobs[action];
-		}
 	}
 }
 
 // note this is not cumulative, this function wipes out previous allocations
 Demographic.prototype.allocatePop = function(workers, action, category) {
-	var allocateAmount = Math.min(this.getAvailablePop(action, category) + this.getAllocatedPop(action, category), workers);
-
-	this.removeAllocation(action, category);
-	if (this.jobs[action] == null) {
-		this.jobs[action] = {'total': 0};
+	var catName = DemographicConst.GetCategoryUseName(category);
+	// make sure the data structure is setup and ready to use
+	if (!this.jobs.hasOwnProperty(action)) {
+		this.jobs[action] = {};
 	}
-	this.jobs[action].total += allocateAmount;
-	if (category != null) {
-		this.jobs[action][category] = allocateAmount;
-	}
-	this.allocatedCount += allocateAmount;
 
-	return allocateAmount;
+	if (!this.jobs[action].hasOwnProperty(catName)) {
+		this.jobs[action][catName] = 0;
+	}
+
+	var allocated = this.jobs[action][catName];
+	var newAmount = Math.min(workers, this.getAvailablePop(action, catName)) - allocated;
+	this.jobs.total += newAmount;
+	this.jobs[action][catName] += newAmount;
+
+	return newAmount + allocated;
 }
 
+// unallocates up to the amount workers, or the maximum that has been allocated
+// returns the amount that was unallocated
 Demographic.prototype.unallocatePop = function(workers, action, category) {
-	var unallocateAmount = Math.min(this.getAllocatedPop(action, category), workers);
-	console.log(unallocateAmount + "," + workers + "," + action + "," + category);
+	var catName = DemographicConst.GetCategoryUseName(category);
 
-	if (unallocateAmount != 0) {
-		// this means that we've done the checks already that action already exists and if applicable category also exists
-		if (category != null) {
-			this.jobs[action][category] -= unallocateAmount;
-			// TODO: there can be a situation where we've unallocated the whole population, but the categories are not empty
-		}
-		this.jobs[action].total -= unallocateAmount;
-		this.allocatedCount -= unallocateAmount;
+	if (this.jobs.hasOwnProperty(action) && this.jobs[action].hasOwnProperty(catName)) {
+		var allocated = this.jobs[action][catName];
+		var unallocateAmount = Math.min(workers, allocated);
+		this.jobs[action][catName] -= unallocateAmount;
+		this.total -= unallocateAmount;
+
+		return unallocateAmount;
 	} else {
 		return 0;
 	}
+}
+
+Demographic.prototype.removeAllocation = function(action, category) {
+	if (this.jobs.hasOwnProperty(action) && this.jobs[action].hasOwnProperty(category)) {
+		this.jobs.total -= this.jobs[action][category];
+		this.jobs[action][category] = 0;
+	}
+}
+
+DemographicConst.GetCategoryUseName = function(category) {
+	if (category == null) {
+		return "__none__";
+	}
+	return category;
 }

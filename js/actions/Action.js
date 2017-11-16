@@ -20,7 +20,7 @@ function Action(_unit, _args) {
 Action.prototype.addOrReplaceAction = function() {
 	for (var i=0 ; i<this.unit.actions.length ; i++) {
 		var iter = this.unit.actions[i];
-		if (iter.type == this.getType()) {
+		if (iter.getType() == this.getType()) {
 			iter.args = this.args;
 			return;
 		}
@@ -54,7 +54,7 @@ Action.prototype.expandDetails = function(parent) {
 }
 
 Action.prototype.newTurn = function() {
-	
+
 }
 
 ActionConst.CreateAction = function(_type, _unit, _args) {
@@ -99,5 +99,11 @@ ActionConst.ProcessActions = function(unit) {
 ActionConst.MeetsCriteria = function(demographic, action, criteria) {
 	if (action == ActionConst.CraftAction) {
 		return CraftConst.MeetsCriteria(demographic, criteria);
+	}
+}
+
+ActionConst.NewTurn = function(unit) {
+	for (var i=0 ; i<unit.actions ; i++) {
+		unit.actionts[i].newTurn();
 	}
 }

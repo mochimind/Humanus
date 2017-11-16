@@ -30,23 +30,23 @@ Resource.prototype.produce = function(amount) {
 // note: if the same category/action has already claimed resources, that quota is used to fulfill this request
 // safe to call with 0 amounts to unclaim
 Resource.prototype.claim = function(amount, action, category) {
-	var claimAmount = 0;
 	var catName = category;
 	if (category == null) {
 		catName = "__none__";
 	}
 
-	if (!this.claimed.includes(action)) {
+	if (!this.claimed.hasOwnProperty(action)) {
 		this.claimed[action] = {};
 	}
 
-	if (!this.claimed[action].includes(category)) {
+	if (!this.claimed[action].hasOwnProperty(category)) {
 		this.claimed[action][category] = 0;
 	}
 
 	// claim as much as available up to the required amount
 	// note, we will internally deal with the 'delta', but we will return the total amount claimed
-	claimAmount = this.claimable(amount, action, category) - alreadyClaimed;
+	var alreadyClaimed = this.claimed[action][category];
+	var claimAmount = Math.min(this.claimable(amount, action, category), amount) - alreadyClaimed
 	this.claimed.total += claimAmount;
 	this.claimed[action][category] += claimAmount;
 
@@ -60,7 +60,7 @@ Resource.prototype.claimable = function(amount, action, category) {
 		catName = "__none__";
 	}
 
-	if (this.claimed.includes(action) && this.claimed[action].includes(catName)) {
+	if (this.claimed.hasOwnProperty(action) && this.claimed[action].hasOwnProperty(catName)) {
 			alreadyClaimed = this.claimed[action][catName];
 	}
 

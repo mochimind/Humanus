@@ -22,6 +22,12 @@ GatherAction.prototype.getType = function() {
 	return ActionConst.GatherAction;
 }
 
+GatherAction.prototype.newTurn = function() {
+	var available = this.unit.population.getAvailablePop(ActionConst.GatherAction);
+	this.args = Math.min(this.args, available);
+	this.unit.population.allocatePop(this.args, ActionConst.GatherAction);
+}
+
 
 ////////////////////////////////// static functions
 

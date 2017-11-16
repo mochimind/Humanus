@@ -96,7 +96,7 @@ Population.prototype.clearAllocatedPop = function() {
 Population.prototype.getAvailablePop = function(action, category) {
 	availablePop = 0;
 	for (var i=0 ; i<this.data.length ; i++) {
-		availablePop += this.data[i].getAvailablePop(action, category) + this.data[i].getAllocatedPop(action, category);
+		availablePop += this.data[i].getAvailablePop(action, category);
 	}
 
 	return Math.floor(availablePop);
@@ -137,7 +137,7 @@ Population.prototype.removeAllocation = function(action, category) {
 	}
 }
 
-Population.prototype.validateWorkers = function(workers, action, criteria) {
+Population.prototype.validateWorkers = function(workers, action, category) {
 	if (isNaN(workers)) {
 		alert("please input a valid number");
 		return false;
@@ -148,7 +148,7 @@ Population.prototype.validateWorkers = function(workers, action, criteria) {
 		return false;
 	}
 
-	if (action != ActionConst.MoveAction && workers > this.getAvailablePop(action), criteria) {
+	if (action != ActionConst.MoveAction && workers > this.getAvailablePop(action, category)) {
 		alert ("not enough free eligible workers to allocate!");
 		return false;
 	}

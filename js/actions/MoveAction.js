@@ -66,6 +66,10 @@ MoveAction.prototype.getType = function() {
 	return ActionConst.MoveAction;
 }
 
+MoveAction.prototype.newTurn = function() {
+	// move action doesn't need to do anything each turn
+}
+
 
 /////////////////////////////////// static functions
 

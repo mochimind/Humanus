@@ -129,9 +129,11 @@ ResourceBundle.prototype.newTurn = function() {
 	}
 }
 
-ResourceBundle.prototype.getMaxAvailable = function(action, category) {
+ResourceBundle.prototype.getMaxAvailable = function(item, action, category) {
 	if (this.resources[item] != null) {
-		return this.resources[item].getMaxAvailable();
+		return this.resources[item].getMaxAvailable(action, category);
+	} else {
+		return 0;
 	}
 }
 

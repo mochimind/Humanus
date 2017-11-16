@@ -50,6 +50,12 @@ HuntAction.prototype.getType = function() {
 	return ActionConst.HuntAction;
 }
 
+HuntAction.prototype.newTurn = function() {
+	var available = this.unit.population.getAvailablePop(ActionConst.HuntAction);
+	this.args = Math.min(this.args, available);
+	this.unit.population.allocatePop(this.args, ActionConst.HuntAction);
+}
+
 
 
 ///////////////////////////// static functions

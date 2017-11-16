@@ -43,9 +43,14 @@ CraftAction.prototype.removeAction = function() {
 }
 
 CraftAction.newTurn = function() {
-	var haveMats = CraftConst.GetMaxAvailableMaterials(this.unit.resources, this.item);
-	var availableWorkers = this.unit.population.getAvailablePop(ActionConst.CraftAction, this.item);
-	this.args = Math.min(haveMats, availableWorkers, this.args);
+
+
+	// now lets reserve what we need
+	for (var i=0 ; i<ItemList[this.item].components.length ; i++) {
+		var requirement = ItemList[this.item].components[i];
+		this.unit.resources.claim(requirement.id, newRuns * requirement.amount, ActionConst.CraftAction, this.item);
+	}
+	this.unit.population.allocatePop(newWorkers, ActionConst.CraftAction, this.item);
 }
 
 // TODO: not sure if this is the best way to do it, but the type of a craft action is a merge between
@@ -74,7 +79,7 @@ CraftConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	for (var i=0 ; i<canCraft.length ; i++) {
 		var item = ItemList[canCraft[i]];
 		var curCrafters = unit.population.getAllocatedPop(ActionConst.CraftAction, item.id);
-		var maxCrafters = unit.population.getAvailablePop(ActionConst.CraftAction, item.id);
+		var maxCrafters = CraftConst.GetMaxProduceable(unit, item.id);
 
 		var containerRow = $("<tr></tr>");
 		var newCell = $("<td></td>");
@@ -140,23 +145,14 @@ CraftConst.HandleSubmit = function() {
 	for (var i=0 ; i<canCraft.length ; i++) {
 		var item = ItemList[canCraft[i]];
 		var workers = $("#ci_" + item.id).val();
-		var allocatable = Math.min(unit.population.getAvailablePop(ActionConst.CraftAction, item.id), workers);
-		if (workers != allocatable) {
-			alert("Can't allocate enough workers for " + item.name + ", could only get " + allocatable);
+		var maxRuns = CraftConst.GetMaxProduceable(unit, item.id);
+		if (workers / item.work > maxRuns) {
+			alert("Can't employ that many workers for " + item.name + ". Circumstances only allow for: " + maxRuns * workers);
 			for (var j=0 ; j<allocationList.length ; j++) {
 				unit.population.unallocatePop(allocationList[j][1], ActionConst.CraftAction, allocationList[j][0]);
 			}
 			return;
 		} else {
-			var matsFor = CraftConst.GetMaxAvailableMaterials(item.id);
-			if (matsFor < workers) {
-				alert("Not enough resources for: " + item.name + ", only have enough for " + matsFor);
-				for (var j=0 ; j<allocationList.length ; j++) {
-					unit.population.unallocatePop(allocationList[j][1], ActionConst.CraftAction, allocationList[j][0]);
-				}
-				return;
-			}
-
 			// we want to store how many additional people we allocated. this way if there's a problem, we can still
 			// restore what the user had allocated last turn
 			allocationList.push([item.id, workers - unit.population.getAllocatedPop(ActionConst.CraftAction, item.id)]);
@@ -183,22 +179,31 @@ CraftConst.MeetsCriteria = function(demographic, item) {
 	return false;
 }
 
+CraftConst.GetMaxProduceable = function(unit, item) {
+	var newWorkers =  unit.population.getAvailablePop(ActionConst.CraftAction, item);
+
+	if (ItemList[item].hasOwnProperty("components") && ItemList[item].components.length != 0) {
+		var maxAvailable = 0;
+		for (var i=0 ; i< ItemList[item].components.length ; i++) {
+			var requestItem = ItemList[item].components[i];
+			if (maxAvailable == 0) {
+				maxAvailable = unit.resources.getMaxAvailable(ActionConst.CraftAction, requestItem.id) / requestItem.amount;
+			} else {
+				maxAvailable = Math.min(maxAvailable, unit.resources.getMaxAvailable(requestItem.id) / requestItem.amount);
+			}
+		}
+		var haveMatsWorkers = Math.floor(maxAvailable * ItemList[item].work);
+		newWorkers = Math.min(newWorkers, haveMatsWorkers);
+	}
+
+	return newWorkers / ItemList[item].work;
+}
+
 // returns the max number that can be manufactured. Returns null if there are no requirements for this item
 CraftConst.GetMaxAvailableMaterials = function(bundle, item) {
-	var maxAvailable = 0;
-	if (ItemList[item].components.length == 0) {
-		return null;
-	}
-	for (var i=0 ; i< ItemList[item].components.length ; i++) {
-		var requestItem = ItemList[item].components[i];
-		if (maxAvailable == 0) {
-			maxAvailable = bundle.getMaxAvailable(ActionConst.CraftAction, requestItem.id) / requestItem.amount;
-		} else {
-			maxAvailable = Math.min(maxAvailable, bundle.getMaxAvailable(requestItem.id) / requestItem.amount);
-		}
-	}
 
 	return maxAvailable;
 }
+
 
 
