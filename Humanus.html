@@ -36,6 +36,7 @@
 				// note, Map needs to inited before Util! It currently has all the game startup stuff in it
 				Util.Init();
 				Turn.Init();
+				UnitPanel.Init();
 
 				Map.GenerateMap();
 			}
@@ -58,9 +59,9 @@
 						</div>
 						<div class="banner rightPanel">Unit:</div>
 						<div id="unitSummary" class="rightPanel dataPanel">
-							Type: <span id='unit'></span><br>
-							Population: <span id='population'></span><br>
-							<table class="rightPanel" id="unitResources">
+							Population: <span id='population'></span> <img src='img/plus.png' id='expandPopulation' class='expanderIcon'><img src='img/minus.png' id='collapsePopulation' class='expanderIcon'><br>
+							<table id='unitPopulation' class='rightPanel dataTable'></table>
+							<table class="rightPanel dataTable" id="unitResources">
 							</table>
 						</div>
 						<div class="banner rightPanel">Actions: </div>

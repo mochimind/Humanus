@@ -13,7 +13,7 @@ Turn.EndTurn = function() {
 	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
 	Turn.PopulateSummary(UnitConst.selectedUnit);
 
-	UnitPanel.UpdatePopulation(Math.floor(UnitConst.selectedUnit.population.getTotalPop()));
+	UnitPanel.UpdatePopulation(UnitConst.selectedUnit.population);
 	UnitPanel.UpdateResources(UnitConst.selectedUnit.resources);
 }
 

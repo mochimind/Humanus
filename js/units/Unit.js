@@ -19,7 +19,7 @@ Unit.prototype.selectUnit = function() {
 	UnitConst.selectedUnit = this;
 	ActionPanel.LoadUnit(this);
 	this.loadInfo();
-	UnitPanel.UpdatePopulation(Math.floor(this.population.getTotalPop()));
+	UnitPanel.UpdatePopulation(this.population);
 	UnitPanel.UpdateResources(this.resources);
 
 }
@@ -30,7 +30,6 @@ Unit.prototype.getIconFName = function() {
 
 // displays information about the unit on the GUI
 Unit.prototype.loadInfo = function() {
-	$("#unit").text(this.getType());
 	this.population.loadInfo();
 	this.resources.loadInfo();
 }

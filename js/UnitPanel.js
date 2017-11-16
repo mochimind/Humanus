@@ -2,8 +2,34 @@ UnitPanel = {};
 
 UnitPanel.ColumnsPerRow = 5;
 
-UnitPanel.UpdatePopulation = function(newPop) {
-	$("#population").val(newPop);
+UnitPanel.Init = function() {
+	$("#collapsePopulation").hide();
+	$("#unitPopulation").hide();
+	$("#expandPopulation").on("click", UnitPanel.ExpandPopulation);
+	$("#collapsePopulation").on("click", UnitPanel.CollapsePopulation);
+}
+
+UnitPanel.ExpandPopulation = function() {
+	$("#collapsePopulation").show();
+	$("#unitPopulation").show();
+	$("#expandPopulation").hide();
+}
+
+UnitPanel.CollapsePopulation = function() {
+	$("#collapsePopulation").hide();
+	$("#unitPopulation").hide();
+	$("#expandPopulation").show();
+}
+
+UnitPanel.UpdatePopulation = function(pop) {
+	$("#population").val(pop.getTotalPop());
+	$("#unitPopulation").empty();
+	for (var i=0 ; i<pop.data.length ; i++) {
+		var newRow = $("<tr></tr>");
+		newRow.append("<td>" + pop.data[i].data.name + "</td>");
+		newRow.append("<td>" + Math.floor(pop.data[i].count) + "</td>");
+		$("#unitPopulation").append(newRow);
+	}
 }
 
 UnitPanel.UpdateResources = function(bundle) {
