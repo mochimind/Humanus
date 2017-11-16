@@ -12,8 +12,10 @@ CookAction.prototype.resolveAction = function() {
 	this.unit.resources.produce(ItemList.Meals.id, harvest * 15);
 	this.unit.resources.consume(ItemList.Food.id, harvest);
 	this.unit.resources.consume(ItemList.Wood.id, harvest);
+}
 
-	// next turn we may not be able to have the same number of cooks due to resource constraints
+CookAction.prototype.newTurn = function() {
+	// check if there's enough resources for the number of cooks we want
 	// assign the max possible
 	this.args = Math.min(this.args, CookConst.GetMaxCooks(this.unit));
 }

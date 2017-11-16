@@ -53,6 +53,10 @@ Action.prototype.expandDetails = function(parent) {
 	this.parent = parent;
 }
 
+Action.prototype.newTurn = function() {
+	
+}
+
 ActionConst.CreateAction = function(_type, _unit, _args) {
 	if (_type == ActionConst.GatherAction) {
 		return new GatherAction(_unit, _args);

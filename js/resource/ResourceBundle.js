@@ -96,14 +96,31 @@ ResourceBundle.prototype.getTurnSummary = function() {
 	return outArr;
 }
 
+// tries to claim a certain amount of an item. Returns the actual amount claimed
+ResourceBundle.prototype.claim = function(item, amount, action, category) {
+	for (var tok in this.resources) {
+		if (this.resources[tok].id == item) {
+			return this.resources[tok].claim(amount, action, category);
+		}
+	}
+	return 0;
+}
+
+ResourceBundle.prototype.claimable = function(item, amount, action, category) {
+	for (var tok in this.resources) {
+		if (this.resources[tok].id == item) {
+			return this.resources[tok].claimable(amount, action, category);
+		}
+	}
+	return 0;
+}
+
 ResourceBundle.prototype.loadInfo = function(){
 
 }
 
 ResourceBundle.prototype.processTurn = function() {
-	for (const tok in this.resource) {
-		this.resources[tok].processTurn();
-	}
+	// should implement spoilage here
 }
 
 ResourceBundle.prototype.newTurn = function() {
@@ -112,4 +129,9 @@ ResourceBundle.prototype.newTurn = function() {
 	}
 }
 
+ResourceBundle.prototype.getMaxAvailable = function(action, category) {
+	if (this.resources[item] != null) {
+		return this.resources[item].getMaxAvailable();
+	}
+}
 
