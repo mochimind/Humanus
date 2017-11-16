@@ -23,16 +23,12 @@ CraftAction.prototype.addOrReplaceAction = function() {
 CraftAction.prototype.resolveAction = function() {
 	var item = ItemList[this.item];
 	var craftAmount = this.args / item.work;
-	if (item.components.length != 0){
-		for (var i=0 ; i<item.components.length ; i++) {
-			craftAmount = Math.min(craftAmount, this.unit.resources.isAvailable(item.components[i].type, 
-				item.components[i].amount * craftAmount) / item.components[i].amount);
-		}
-	}
+
+	// at this stage everything that's needed for production has already been allocated, just produce the darn thing
 	this.unit.resources.produce(item.id, craftAmount);
 	if (item.components.length != 0) {
 		for (var i=0 ; i<item.components.length ; i++) {
-			this.unit.resources.consume(item.components[i].amount * craftAmount);
+			this.unit.resources.consume(item.components[i].id, item.components[i].amount * craftAmount);
 		}
 	}
 }
@@ -51,6 +47,7 @@ CraftAction.newTurn = function() {
 		this.unit.resources.claim(requirement.id, newRuns * requirement.amount, ActionConst.CraftAction, this.item);
 	}
 	this.unit.population.allocatePop(newWorkers, ActionConst.CraftAction, this.item);
+	this.args = newWorkers;
 }
 
 // TODO: not sure if this is the best way to do it, but the type of a craft action is a merge between
@@ -79,7 +76,7 @@ CraftConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	for (var i=0 ; i<canCraft.length ; i++) {
 		var item = ItemList[canCraft[i]];
 		var curCrafters = unit.population.getAllocatedPop(ActionConst.CraftAction, item.id);
-		var maxCrafters = CraftConst.GetMaxProduceable(unit, item.id);
+		var maxCrafters = CraftConst.GetMaxProduceable(unit, item.id) * ItemList[item.id].work;
 
 		var containerRow = $("<tr></tr>");
 		var newCell = $("<td></td>");
@@ -184,12 +181,13 @@ CraftConst.GetMaxProduceable = function(unit, item) {
 
 	if (ItemList[item].hasOwnProperty("components") && ItemList[item].components.length != 0) {
 		var maxAvailable = 0;
-		for (var i=0 ; i< ItemList[item].components.length ; i++) {
+		for (var i=0 ; i<ItemList[item].components.length ; i++) {
 			var requestItem = ItemList[item].components[i];
+			console.log(requestItem);
 			if (maxAvailable == 0) {
-				maxAvailable = unit.resources.getMaxAvailable(ActionConst.CraftAction, requestItem.id) / requestItem.amount;
+				maxAvailable = unit.resources.getMaxAvailable(requestItem.id, ActionConst.CraftAction, item) / requestItem.amount;
 			} else {
-				maxAvailable = Math.min(maxAvailable, unit.resources.getMaxAvailable(requestItem.id) / requestItem.amount);
+				maxAvailable = Math.min(maxAvailable, unit.resources.getMaxAvailable(requestItem.id, ActionConst.CraftAction, item) / requestItem.amount);
 			}
 		}
 		var haveMatsWorkers = Math.floor(maxAvailable * ItemList[item].work);

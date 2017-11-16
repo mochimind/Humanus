@@ -130,6 +130,8 @@ ResourceBundle.prototype.newTurn = function() {
 }
 
 ResourceBundle.prototype.getMaxAvailable = function(item, action, category) {
+	console.log("processing: " + item + "||" + action + "||" + category);
+	console.log(this.resources[item]);
 	if (this.resources[item] != null) {
 		return this.resources[item].getMaxAvailable(action, category);
 	} else {

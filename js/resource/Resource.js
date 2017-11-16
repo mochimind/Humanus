@@ -9,6 +9,7 @@ function Resource(id, amount) {
 }
 
 Resource.prototype.consume = function(amount) {
+	console.log("consuming: " + this.id + "||" + amount);
 	if (this.amount > amount) {
 		this.amount -= amount;
 		this.consumedThisTurn += amount;
@@ -78,7 +79,7 @@ Resource.prototype.getMaxAvailable = function(action, category) {
 		claimed = this.claimed[action][category];
 	}
 
-	return this.claimed.total + claimed;
+	return this.amount - this.claimed.total + claimed;
 }
 
 Resource.prototype.getConsumedReport = function() {
