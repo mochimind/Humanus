@@ -46,6 +46,7 @@ UpgradeConst.ExecuteUpgrade = function(unit, upgradeFrom, upgradeTo, amount) {
 	} else {
 		upgradeToDemograph.count += amount;
 	}
+	ActionPanel.LoadUnit(unit);
 }
 
 // returns the number that can be upgraded, or 0 on error
@@ -66,7 +67,6 @@ UpgradeConst.CanUpgradeCount = function(unit, upgradeFrom, upgradeTo) {
 		for (var j=0 ; j<unit.population.data.length ; j++) {
 			// iterate through all existing demographies
 			var compareDemograph = unit.population.data[j];
-			console.log(compareDemograph.data);
 			if (compareDemograph.data.upgradeReq == null) {
 				continue;
 			}

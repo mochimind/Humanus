@@ -74,6 +74,8 @@ CraftConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	var canCraft = unit.getPossibleCrafts();
 
 	parent.append("<p>You have " + " people that can craft. Select items to allocate your crafters to.</p>");
+	parent.append(executeBut);
+	parent.append(cancelBut);
 	var containerTable = $("<table border='1px'></table>");
 	var headerRow = $("<tr></tr>");
 	headerRow.append("<th>Item</th>");
@@ -108,10 +110,7 @@ CraftConst.ExpandDetails = function(parent, executeBut, cancelBut) {
 	}
 	parent.append(containerTable);
 	parent.append("<br>");
-	parent.append("<br>");
 
-	parent.append(executeBut);
-	parent.append(cancelBut);
 
 	executeBut.on("click", CraftConst.HandleSubmit);
 	cancelBut.on("click", ActionPanel.HandleCancel);
