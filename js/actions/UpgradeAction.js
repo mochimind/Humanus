@@ -37,6 +37,8 @@ UpgradeConst.ExecuteUpgrade = function(unit, upgradeFrom, upgradeTo, amount) {
 		}
 	}
 
+	unit.population.addTurnSummary("Upgraded " + amount + " " + UnitList[upgradeFrom].name + " to " + UnitList[upgradeTo].name);
+
 	if (upgradeToDemograph == null) {
 		// TODO: this is not clean - population should be handling this functionality
 		upgradeToDemograph = new Demographic(amount, unit.population, UnitList[upgradeTo]);
