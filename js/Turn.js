@@ -7,14 +7,16 @@ Turn.Init = function() {
 Turn.EndTurn = function() {
 	$("#turnSummary").empty();
 	ActionPanel.UnloadDetails();
-	UnitConst.ClearTurnSummaries();
 
 	UnitConst.ProcessTurn();
 	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
+	UpgradeConst.ProcessTurn();
 	Turn.PopulateSummary(UnitConst.selectedUnit);
 
 	UnitPanel.UpdatePopulation(UnitConst.selectedUnit.population);
 	UnitPanel.UpdateResources(UnitConst.selectedUnit.resources);
+
+	UnitConst.NewTurn();
 }
 
 Turn.PopulateSummary = function(unit) {

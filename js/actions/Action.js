@@ -6,6 +6,7 @@ ActionConst.CookAction = "Cook";
 ActionConst.EncampAction = "Encamp";
 ActionConst.MoveAction = "Move";
 ActionConst.CraftAction = "Craft";
+ActionConst.UpgradeAction = "Upgrade";
 
 function Action(_unit, _args) {
 	this.unit = _unit;

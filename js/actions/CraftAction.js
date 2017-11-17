@@ -47,7 +47,7 @@ CraftAction.prototype.removeAction = function() {
 	this.unit.population.removeAllocation(this.item);
 }
 
-CraftAction.newTurn = function() {
+CraftAction.prototype.newTurn = function() {
 
 
 	// now lets reserve what we need

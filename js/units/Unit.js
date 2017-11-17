@@ -141,7 +141,7 @@ Unit.prototype.processTurn = function() {
 
 ////////////////////////// Global functions
 
-UnitConst.ClearTurnSummaries = function() {
+UnitConst.NewTurn = function() {
 	for (var i=0 ; i<UnitConst.units.length ; i++) {
 		UnitConst.units[i].newTurn();
 	}
