@@ -41,6 +41,8 @@ UpgradeConst.ExecuteUpgrade = function(unit, upgradeFrom, upgradeTo, amount) {
 		// TODO: this is not clean - population should be handling this functionality
 		upgradeToDemograph = new Demographic(amount, unit.population, UnitList[upgradeTo]);
 		unit.population.data.push(upgradeToDemograph);
+	} else {
+		upgradeToDemograph.count += amount;
 	}
 }
 
