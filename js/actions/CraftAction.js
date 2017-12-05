@@ -59,7 +59,7 @@ CraftAction.prototype.newTurn = function() {
 		newRuns = newRuns == -1 ? runnable : Math.min(curRuns, newRuns, runnable);
 	}
 	runnable = this.unit.population.getAvailablePop(ActionConst.CraftAction, this.item) / ItemList[this.item].work;
-	newRuns = newRuns == 0 ? Math.min(curRuns, runnable) : Math.min(curRuns, newRuns, runnable);
+	newRuns = newRuns == -1 ? Math.min(curRuns, runnable) : Math.min(curRuns, newRuns, runnable);
 
 	// now, let's reserve what we need
 	for (var i=0 ; i<ItemList[this.item].components.length ; i++) {
