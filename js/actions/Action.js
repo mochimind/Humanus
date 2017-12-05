@@ -104,7 +104,7 @@ ActionConst.MeetsCriteria = function(demographic, action, criteria) {
 }
 
 ActionConst.NewTurn = function(unit) {
-	for (var i=0 ; i<unit.actions ; i++) {
-		unit.actionts[i].newTurn();
+	for (var i=0 ; i<unit.actions.length ; i++) {
+		unit.actions[i].newTurn();
 	}
 }

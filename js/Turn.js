@@ -9,14 +9,14 @@ Turn.EndTurn = function() {
 	ActionPanel.UnloadDetails();
 
 	UnitConst.ProcessTurn();
-	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
 	UpgradeConst.ProcessTurn();
 	Turn.PopulateSummary(UnitConst.selectedUnit);
 
+	UnitConst.NewTurn();
+	
+	ActionPanel.UpdateCurrentActions(UnitConst.selectedUnit);
 	UnitPanel.UpdatePopulation(UnitConst.selectedUnit.population);
 	UnitPanel.UpdateResources(UnitConst.selectedUnit.resources);
-
-	UnitConst.NewTurn();
 }
 
 Turn.PopulateSummary = function(unit) {

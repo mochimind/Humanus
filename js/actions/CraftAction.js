@@ -48,15 +48,27 @@ CraftAction.prototype.removeAction = function() {
 }
 
 CraftAction.prototype.newTurn = function() {
+	var newRuns = -1;
+	var curRuns = this.args / ItemList[this.item].work;
+	var runnable;
 
+	// now lets see how much we can reserve 
+	for (var i=0 ; i<ItemList[this.item].components.length ; i++) {
+		var requirement = ItemList[this.item].components[i];
+		runnable = this.unit.resources.claimable(requirement.id, curRuns * requirement.amount, ActionConst.CraftAction, this.item) / requirement.amount;
+		newRuns = newRuns == -1 ? runnable : Math.min(curRuns, newRuns, runnable);
+	}
+	runnable = this.unit.population.getAvailablePop(ActionConst.CraftAction, this.item) / ItemList[this.item].work;
+	newRuns = Math.min(curRuns, newRuns, runnable);
 
-	// now lets reserve what we need
+	// now, let's reserve what we need
 	for (var i=0 ; i<ItemList[this.item].components.length ; i++) {
 		var requirement = ItemList[this.item].components[i];
 		this.unit.resources.claim(requirement.id, newRuns * requirement.amount, ActionConst.CraftAction, this.item);
 	}
-	this.unit.population.allocatePop(newWorkers, ActionConst.CraftAction, this.item);
-	this.args = newWorkers;
+
+	this.args = newRuns * ItemList[this.item].work;
+	this.unit.population.allocatePop(this.args, ActionConst.CraftAction, this.item);
 }
 
 // TODO: not sure if this is the best way to do it, but the type of a craft action is a merge between
